@@ -16,9 +16,9 @@ export function HomePage() {
         <div className="hero-overlay" />
         <div className="hero-lines" aria-hidden="true" />
         <div className="site-container hero-content">
-          <div className="hero-kicker"><span /> Curadoria imobiliária em Viçosa e região</div>
-          <h1>Seu próximo<br />capítulo começa<br /><em>no lugar certo.</em></h1>
-          <p>Imóveis escolhidos com critério. Uma jornada conduzida com clareza, proximidade e segurança.</p>
+          <div className="hero-kicker"><span /> Especialista imobiliário em Viçosa e região</div>
+          <h1>Toda grande história<br />tem um <em>endereço.</em></h1>
+          <p>Imóveis escolhidos a dedo. Uma experiência guiada com transparência, segurança e confiança em cada etapa.</p>
           <div className="hero-actions">
             <Link className="button button--gold" to="/imoveis">Explorar imóveis <ArrowRight size={18} /></Link>
             <a className="button button--glass" href={whatsappUrl("Olá Jorge! Gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Falar com Jorge</a>

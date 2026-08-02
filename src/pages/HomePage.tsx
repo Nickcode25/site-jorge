@@ -65,8 +65,8 @@ export function HomePage() {
           <div className="about-copy">
             <span className="section-label">Sobre Jorge Soares</span>
             <h2>Uma escolha importante pede uma conversa <em>honesta.</em></h2>
-            <p>Meu trabalho começa antes da visita e continua depois das chaves. Entendo o que realmente importa para você, seleciono as oportunidades certas e conduzo cada negociação com transparência.</p>
-            <p>Atuo com apartamentos, casas e terrenos em Viçosa e região, combinando conhecimento de mercado com um atendimento próximo e sem pressa.</p>
+            <p>Meu trabalho começa antes da visita e não termina na entrega das chaves. Busco entender o que realmente importa para você, seleciono as oportunidades certas e conduzo cada negociação com transparência.</p>
+            <p>Atuo com apartamentos, casas e terrenos em Viçosa e região, unindo conhecimento de mercado a um atendimento próximo, atento e sem pressa.</p>
             <div className="about-values">
               <span><ShieldCheck /> Segurança em cada etapa</span>
               <span><Award /> Curadoria especializada</span>

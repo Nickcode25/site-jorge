@@ -61,7 +61,8 @@ img { display: block; max-width: 100%; }
 .button--dark { color: #fff; background: var(--ink); }
 .button--outline-dark { color: var(--ink); border-color: rgba(17,19,16,.38); background: transparent; }
 .button--outline-dark:hover { color: #fff; background: var(--ink); }
-.button--whatsapp { color: #fff; background: #1f7a5b; }
+.button--whatsapp { color: var(--ink); background: var(--gold-light); border-color: var(--gold-light); }
+.button--whatsapp:hover { background: #f0dba8; border-color: #f0dba8; }
 .scroll-cue { position: absolute; z-index: 2; left: 31px; bottom: 36px; display: flex; align-items: center; gap: 12px; writing-mode: vertical-rl; font-size: 8px; letter-spacing: .28em; }
 .hero-credential { position: absolute; z-index: 2; right: 34px; bottom: 33px; text-align: right; border-right: 2px solid var(--gold); padding-right: 13px; }
 .hero-credential strong, .hero-credential span { display: block; }
@@ -143,14 +144,14 @@ img { display: block; max-width: 100%; }
 .whatsapp-direct small { margin-bottom: 4px; color: rgba(255,255,255,.5); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; }
 .whatsapp-card { position: relative; padding: 50px; overflow: hidden; background: var(--paper); color: var(--ink); box-shadow: 0 26px 70px rgba(0,0,0,.18); }
 .whatsapp-card::after { content: ""; position: absolute; right: -85px; top: -85px; width: 210px; height: 210px; border: 1px solid rgba(200,166,103,.28); border-radius: 50%; box-shadow: 0 0 0 28px rgba(200,166,103,.06); }
-.whatsapp-card-icon { position: relative; z-index: 1; width: 58px; height: 58px; display: grid; place-items: center; margin-bottom: 30px; color: #fff; background: #1f7a5b; border-radius: 50%; }
+.whatsapp-card-icon { position: relative; z-index: 1; width: 58px; height: 58px; display: grid; place-items: center; margin-bottom: 30px; color: var(--ink); background: var(--gold-light); border-radius: 50%; }
 .whatsapp-card-icon svg { width: 27px; height: 27px; }
 .whatsapp-card-label { color: #7b6336; font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
 .whatsapp-card h3 { margin: 14px 0 20px; font: 400 clamp(2.25rem, 4vw, 3.5rem)/1 var(--serif); letter-spacing: -.035em; }
-.whatsapp-card > p { max-width: 470px; color: var(--muted); line-height: 1.75; }
+.contact-grid .whatsapp-card > p { max-width: 470px; color: var(--muted); line-height: 1.75; }
 .whatsapp-benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 22px; margin: 28px 0 32px; padding: 24px 0; border-block: 1px solid var(--line); }
 .whatsapp-benefits span { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; }
-.whatsapp-benefits svg { width: 17px; color: #1f7a5b; }
+.whatsapp-benefits svg { width: 17px; color: #9a7940; }
 .whatsapp-card-button { width: 100%; }
 .whatsapp-card > small { display: block; margin-top: 14px; color: var(--muted); text-align: center; font-size: 10px; letter-spacing: .08em; }
 .contact-form { display: grid; gap: 20px; padding: 42px; background: #f4f1ea; color: var(--ink); }

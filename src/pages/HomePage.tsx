@@ -16,7 +16,7 @@ export function HomePage() {
         <div className="hero-overlay" />
         <div className="hero-lines" aria-hidden="true" />
         <div className="site-container hero-content">
-          <div className="hero-kicker"><span /> Curadoria imobiliária em São Paulo</div>
+          <div className="hero-kicker"><span /> Curadoria imobiliária em Viçosa e região</div>
           <h1>Seu próximo<br />capítulo começa<br /><em>no lugar certo.</em></h1>
           <p>Imóveis escolhidos com critério. Uma jornada conduzida com clareza, proximidade e segurança.</p>
           <div className="hero-actions">
@@ -25,7 +25,7 @@ export function HomePage() {
           </div>
         </div>
         <a className="scroll-cue" href="#encontre"><span>DESCUBRA</span><ArrowDownRight size={21} /></a>
-        <div className="hero-credential"><strong>CRECI</strong><span>123.456-F</span></div>
+        <div className="hero-credential"><strong>CRECI PJ</strong><span>8467</span></div>
       </section>
 
       <section className="find-section section-light" id="encontre">
@@ -33,7 +33,7 @@ export function HomePage() {
           <div className="profile-strip">
             <div className="profile-intro">
               <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=88" alt="Retrato de Jorge Soares" />
-              <div><span>Seu corretor</span><h2>Jorge Soares</h2><p>Especialista em imóveis residenciais · CRECI 123.456-F</p></div>
+              <div><span>Seu corretor</span><h2>Jorge Soares</h2><p>Especialista em imóveis residenciais · CRECI PJ: 8467</p></div>
             </div>
             <p className="profile-quote">“O imóvel certo não é apenas uma escolha financeira. É o cenário da vida que você quer viver.”</p>
           </div>
@@ -66,7 +66,7 @@ export function HomePage() {
             <span className="section-label">Sobre Jorge Soares</span>
             <h2>Uma escolha importante pede uma conversa <em>honesta.</em></h2>
             <p>Meu trabalho começa antes da visita e continua depois das chaves. Entendo o que realmente importa para você, seleciono as oportunidades certas e conduzo cada negociação com transparência.</p>
-            <p>Atuo com apartamentos, casas e terrenos em São Paulo e região, combinando conhecimento de mercado com um atendimento próximo e sem pressa.</p>
+            <p>Atuo com apartamentos, casas e terrenos em Viçosa e região, combinando conhecimento de mercado com um atendimento próximo e sem pressa.</p>
             <div className="about-values">
               <span><ShieldCheck /> Segurança em cada etapa</span>
               <span><Award /> Curadoria especializada</span>

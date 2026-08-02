@@ -19,11 +19,11 @@ export function Footer() {
         <div>
           <span className="footer-title">Contato</span>
           <a href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar.")} target="_blank" rel="noreferrer"><MessageCircle size={15} /> {whatsappDisplay}</a>
-          <span><MapPin size={15} /> São Paulo e região</span>
+          <span><MapPin size={15} /> Viçosa e região</span>
         </div>
       </div>
       <div className="site-container footer-bottom">
-        <span>© {new Date().getFullYear()} Jorge Soares Imóveis</span><span>CRECI 123.456-F · Todos os direitos reservados</span>
+        <span>© {new Date().getFullYear()} Jorge Soares Imóveis</span><span>CRECI PJ: 8467 · Todos os direitos reservados</span>
       </div>
     </footer>
   );

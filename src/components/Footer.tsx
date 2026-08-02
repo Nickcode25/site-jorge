@@ -10,7 +10,7 @@ export function Footer() {
           <div className="brand footer-brand">
             <span className="brand-main">JORGE</span><span className="brand-accent">SOARES</span><span className="brand-tag">IMÓVEIS</span>
           </div>
-          <p>Curadoria imobiliária com atenção aos detalhes, transparência e visão de longo prazo.</p>
+          <p>Cada detalhe importa. Trabalho com transparência e visão de longo prazo em cada negociação.</p>
         </div>
         <div>
           <span className="footer-title">Navegação</span>

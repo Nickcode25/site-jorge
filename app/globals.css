@@ -141,6 +141,18 @@ img { display: block; max-width: 100%; }
 .whatsapp-direct > svg { width: 42px; height: 42px; padding: 10px; border: 1px solid rgba(224,200,145,.45); border-radius: 50%; }
 .whatsapp-direct small, .whatsapp-direct strong { display: block; }
 .whatsapp-direct small { margin-bottom: 4px; color: rgba(255,255,255,.5); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; }
+.whatsapp-card { position: relative; padding: 50px; overflow: hidden; background: var(--paper); color: var(--ink); box-shadow: 0 26px 70px rgba(0,0,0,.18); }
+.whatsapp-card::after { content: ""; position: absolute; right: -85px; top: -85px; width: 210px; height: 210px; border: 1px solid rgba(200,166,103,.28); border-radius: 50%; box-shadow: 0 0 0 28px rgba(200,166,103,.06); }
+.whatsapp-card-icon { position: relative; z-index: 1; width: 58px; height: 58px; display: grid; place-items: center; margin-bottom: 30px; color: #fff; background: #1f7a5b; border-radius: 50%; }
+.whatsapp-card-icon svg { width: 27px; height: 27px; }
+.whatsapp-card-label { color: #7b6336; font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.whatsapp-card h3 { margin: 14px 0 20px; font: 400 clamp(2.25rem, 4vw, 3.5rem)/1 var(--serif); letter-spacing: -.035em; }
+.whatsapp-card > p { max-width: 470px; color: var(--muted); line-height: 1.75; }
+.whatsapp-benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 22px; margin: 28px 0 32px; padding: 24px 0; border-block: 1px solid var(--line); }
+.whatsapp-benefits span { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; }
+.whatsapp-benefits svg { width: 17px; color: #1f7a5b; }
+.whatsapp-card-button { width: 100%; }
+.whatsapp-card > small { display: block; margin-top: 14px; color: var(--muted); text-align: center; font-size: 10px; letter-spacing: .08em; }
 .contact-form { display: grid; gap: 20px; padding: 42px; background: #f4f1ea; color: var(--ink); }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .contact-form label, .filters-panel label, .property-modal label, .login-box label { display: grid; gap: 9px; font-size: 9px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
@@ -290,7 +302,7 @@ img { display: block; max-width: 100%; }
   .profile-strip { padding: 24px 0; align-items: flex-start; flex-direction: column; gap: 18px; }.profile-quote { font-size: 15px; }.split-heading { grid-template-columns: 1fr; gap: 25px; margin-top: 68px; }.type-grid { grid-template-columns: 1fr; }.type-card { min-height: 220px; border-right: 0; border-bottom: 1px solid var(--line); }.type-card:last-child { border-bottom: 0; }
   .find-section { padding-bottom: 75px; }.featured-section, .about-section, .contact-section { padding: 78px 0; }.featured-heading { align-items: flex-start; flex-direction: column; gap: 22px; }
   .property-grid { grid-template-columns: 1fr; }.property-grid--featured .property-card:last-child { grid-column: auto; max-width: none; }.property-card--compact .property-image-wrap { height: 300px; }
-  .about-grid, .contact-grid { grid-template-columns: 1fr; }.about-grid { gap: 75px; }.about-visual img { height: 520px; }.experience-stamp { right: -5px; bottom: -28px; width: 140px; height: 140px; }.about-values { grid-template-columns: 1fr; }.contact-grid { gap: 45px; }.contact-form { padding: 25px; }.field-row { grid-template-columns: 1fr; }
+  .about-grid, .contact-grid { grid-template-columns: 1fr; }.about-grid { gap: 75px; }.about-visual img { height: 520px; }.experience-stamp { right: -5px; bottom: -28px; width: 140px; height: 140px; }.about-values { grid-template-columns: 1fr; }.contact-grid { gap: 45px; }.contact-form, .whatsapp-card { padding: 28px; }.field-row, .whatsapp-benefits { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 36px; }.footer-bottom { gap: 15px; align-items: flex-start; flex-direction: column; }
   .page-hero { padding: 145px 0 65px; }.page-hero h1 { font-size: 3.4rem; }.filters-panel { grid-template-columns: 1fr; }.filters-title, .clear-button { grid-column: auto; }.results-bar { align-items: flex-start; flex-direction: column; justify-content: center; gap: 8px; }
   .detail-page { padding-top: 74px; }.detail-topbar { height: 60px; }.detail-topbar button { font-size: 0; }.gallery { width: 100%; height: 470px; grid-template-columns: 1fr; }.gallery-thumbs { display: none; }.detail-layout { grid-template-columns: 1fr; gap: 45px; padding-block: 55px 75px; }.detail-specs { overflow-x: auto; }.detail-specs div { min-width: 100px; }.contact-card { position: static; }

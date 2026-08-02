@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { whatsappUrl } from "@/src/lib/contact";
 
 const nav = [
   { label: "Home", to: "/" },
@@ -24,12 +25,10 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => setOpen(false), [location.pathname, location.hash]);
-
   return (
     <header className={`site-header ${overHero ? "site-header--hero" : "site-header--solid"}`}>
       <div className="site-container header-inner">
-        <Link to="/" className="brand" aria-label="Jorge Soares — início">
+        <Link to="/" className="brand" aria-label="Jorge Soares — início" onClick={() => setOpen(false)}>
           <span className="brand-main">JORGE</span>
           <span className="brand-accent">SOARES</span>
           <span className="brand-tag">IMÓVEIS</span>
@@ -41,11 +40,11 @@ export function Header() {
 
         <nav className={`main-nav ${open ? "main-nav--open" : ""}`} aria-label="Navegação principal">
           {nav.map((item) => (
-            <NavLink key={item.label} to={item.to} className={({ isActive }) => (isActive && item.to !== "/" ? "active" : "")}>
+            <NavLink key={item.label} to={item.to} onClick={() => setOpen(false)} className={({ isActive }) => (isActive && item.to !== "/" ? "active" : "")}>
               {item.label}
             </NavLink>
           ))}
-          <Link className="nav-cta" to="/#contato">Agendar conversa</Link>
+          <a className="nav-cta" href={whatsappUrl("Olá Jorge! Gostaria de agendar uma conversa.")} target="_blank" rel="noreferrer" onClick={() => setOpen(false)}>Falar no WhatsApp</a>
         </nav>
       </div>
     </header>

@@ -18,4 +18,4 @@ Site institucional e catálogo imobiliário responsivo, com área pública e pai
 - `/admin/login` — autenticação por e-mail e senha
 - `/admin` — CRUD, fotos e controle de destaques
 
-Antes da publicação definitiva, substitua telefone, WhatsApp, CRECI, e-mail, retrato e domínio pelos dados reais de Jorge Soares.
+Antes da publicação definitiva, substitua CRECI, retrato e domínio pelos dados reais de Jorge Soares.

@@ -4,6 +4,7 @@ import { PageLoader } from "@/src/components/PageLoader";
 import { PropertyCard } from "@/src/components/PropertyCard";
 import { PropertyTypeButtons } from "@/src/components/PropertyTypeButtons";
 import { useProperties } from "@/src/hooks/useProperties";
+import { whatsappDisplay, whatsappUrl } from "@/src/lib/contact";
 import { propertyImages } from "@/src/lib/mock-data";
 
 export function HomePage() {
@@ -20,7 +21,7 @@ export function HomePage() {
           <p>Imóveis escolhidos com critério. Uma jornada conduzida com clareza, proximidade e segurança.</p>
           <div className="hero-actions">
             <Link className="button button--gold" to="/imoveis">Explorar imóveis <ArrowRight size={18} /></Link>
-            <a className="button button--glass" href="https://wa.me/5511999999999" target="_blank" rel="noreferrer"><MessageCircle size={18} /> Falar com Jorge</a>
+            <a className="button button--glass" href={whatsappUrl("Olá Jorge! Gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Falar com Jorge</a>
           </div>
         </div>
         <a className="scroll-cue" href="#encontre"><span>DESCUBRA</span><ArrowDownRight size={21} /></a>
@@ -80,18 +81,24 @@ export function HomePage() {
       <section className="contact-section" id="contato">
         <div className="site-container contact-grid">
           <div>
-            <span className="section-label section-label--gold">Próximo passo</span>
-            <h2>Conte-me o que você<br />está buscando.</h2>
-            <p>Uma boa escolha começa com uma conversa. Respondo pessoalmente e sem compromisso.</p>
-            <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="whatsapp-direct"><MessageCircle /> <span><small>Prefere WhatsApp?</small><strong>(11) 99999-9999</strong></span></a>
+            <span className="section-label section-label--gold">Contato direto</span>
+            <h2>Uma conversa pode<br />ser o primeiro passo.</h2>
+            <p>Sem formulários e sem espera. Fale diretamente comigo pelo WhatsApp para tirar dúvidas, receber sugestões ou agendar uma visita.</p>
+            <a href={whatsappUrl("Olá Jorge! Gostaria de saber mais sobre os imóveis disponíveis.")} target="_blank" rel="noreferrer" className="whatsapp-direct"><MessageCircle /> <span><small>WhatsApp</small><strong>{whatsappDisplay}</strong></span></a>
           </div>
-          <form className="contact-form" onSubmit={(event) => { event.preventDefault(); alert("Mensagem recebida! Jorge entrará em contato em breve."); }}>
-            <div className="field-row"><label>Nome<input required name="nome" placeholder="Como posso chamar você?" /></label><label>Telefone<input required name="telefone" placeholder="(11) 99999-9999" /></label></div>
-            <label>E-mail<input type="email" name="email" placeholder="voce@email.com" /></label>
-            <label>O que você procura?<select name="interesse" defaultValue=""><option value="" disabled>Selecione uma opção</option><option>Comprar um imóvel</option><option>Vender meu imóvel</option><option>Avaliação imobiliária</option><option>Outro assunto</option></select></label>
-            <label>Mensagem<textarea name="mensagem" rows={4} placeholder="Conte um pouco sobre o seu momento..." /></label>
-            <button className="button button--gold" type="submit">Enviar mensagem <ArrowRight size={18} /></button>
-          </form>
+          <div className="whatsapp-card">
+            <div className="whatsapp-card-icon"><MessageCircle /></div>
+            <span className="whatsapp-card-label">Atendimento pelo WhatsApp</span>
+            <h3>Fale diretamente<br />com Jorge Soares.</h3>
+            <p>Conte o que procura e receba um atendimento pessoal, claro e sem compromisso.</p>
+            <div className="whatsapp-benefits">
+              <span><CheckCircle2 /> Resposta pessoal</span>
+              <span><CheckCircle2 /> Informações dos imóveis</span>
+              <span><CheckCircle2 /> Agendamento de visitas</span>
+            </div>
+            <a className="button button--whatsapp whatsapp-card-button" href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer">Iniciar conversa <ArrowRight size={18} /></a>
+            <small>{whatsappDisplay}</small>
+          </div>
         </div>
       </section>
     </>

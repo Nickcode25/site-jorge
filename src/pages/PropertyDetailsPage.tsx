@@ -6,6 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import { formatPrice, PropertyCard } from "@/src/components/PropertyCard";
 import { PageLoader } from "@/src/components/PageLoader";
 import { useProperties } from "@/src/hooks/useProperties";
+import { whatsappUrl } from "@/src/lib/contact";
 
 export function PropertyDetailsPage() {
   const { id } = useParams();
@@ -43,8 +44,7 @@ export function PropertyDetailsPage() {
         <aside className="contact-card">
           <span>Valor do imóvel</span><strong>{formatPrice(property.preco)}</strong><small>Condições sujeitas a confirmação</small>
           <div className="contact-agent"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=86" alt="Jorge Soares" /><div><b>Jorge Soares</b><span>CRECI 123.456-F</span></div></div>
-          <a className="button button--whatsapp" href={`https://wa.me/5511999999999?text=${encodeURIComponent(`Olá Jorge, tenho interesse no imóvel ${property.titulo}.`)}`} target="_blank" rel="noreferrer"><MessageCircle size={19} /> Conversar no WhatsApp</a>
-          <a className="button button--outline-dark" href="mailto:contato@jorgesoares.com.br">Enviar por e-mail</a>
+          <a className="button button--whatsapp" href={whatsappUrl(`Olá Jorge, tenho interesse no imóvel ${property.titulo}.`)} target="_blank" rel="noreferrer"><MessageCircle size={19} /> Conversar no WhatsApp</a>
           <p>Atendimento pessoal, sem compromisso.</p>
         </aside>
       </section>

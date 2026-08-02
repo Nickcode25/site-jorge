@@ -1,5 +1,6 @@
-import { Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { MapPin, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { whatsappDisplay, whatsappUrl } from "@/src/lib/contact";
 
 export function Footer() {
   return (
@@ -17,10 +18,8 @@ export function Footer() {
         </div>
         <div>
           <span className="footer-title">Contato</span>
-          <a href="tel:+5511999999999"><Phone size={15} /> (11) 99999-9999</a>
-          <a href="mailto:contato@jorgesoares.com.br"><Mail size={15} /> contato@jorgesoares.com.br</a>
+          <a href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar.")} target="_blank" rel="noreferrer"><MessageCircle size={15} /> {whatsappDisplay}</a>
           <span><MapPin size={15} /> São Paulo e região</span>
-          <a href="https://instagram.com" target="_blank" rel="noreferrer"><Instagram size={15} /> @jorgesoares.imoveis</a>
         </div>
       </div>
       <div className="site-container footer-bottom">

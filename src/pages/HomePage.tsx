@@ -33,7 +33,7 @@ export function HomePage() {
           <div className="profile-strip">
             <div className="profile-intro">
               <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=88" alt="Retrato de Jorge Soares" />
-              <div><span>Seu corretor</span><h2>Jorge Soares</h2><p>Especialista em imóveis residenciais · CRECI PJ: 8467</p></div>
+              <div><span>Seu corretor</span><h2>Jorge Soares</h2><p>Especialista em imóveis em Viçosa e região · CRECI PJ: 8467</p></div>
             </div>
             <p className="profile-quote">“O imóvel certo não é apenas uma escolha financeira. É o cenário da vida que você quer viver.”</p>
           </div>

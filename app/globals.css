@@ -128,16 +128,16 @@ img { display: block; max-width: 100%; }
 .property-features span { display: flex; align-items: center; gap: 5px; font-size: 11px; }
 .center-action { margin-top: 50px; text-align: center; }
 
-.about-section { padding: 130px 0; }
-.about-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 105px; align-items: center; }
-.about-visual { position: relative; }
-.about-visual::before { content: ""; position: absolute; top: -22px; left: -22px; width: 48%; height: 54%; border: 1px solid var(--gold); }
-.about-logo-frame { position: relative; height: 640px; overflow: hidden; }
-.about-logo-frame img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
-.about-logo-frame img.about-brand-logo { filter: none; transform: scale(1.35); }
-.experience-stamp { position: absolute; right: -42px; bottom: 48px; width: 170px; height: 170px; background: var(--ink); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.experience-stamp strong { font: 400 62px/.9 var(--serif); color: var(--gold-on-dark); }
-.experience-stamp span { margin-top: 11px; font-size: 9px; line-height: 1.5; letter-spacing: .09em; text-transform: uppercase; }
+.about-section { padding: 120px 0; }
+.about-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 90px; align-items: center; }
+.about-brand-card { min-height: 560px; padding: 58px 48px 42px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(145deg, #eeeff8, #f8f6f0 70%); border: 1px solid rgba(50,54,117,.16); }
+.about-brand-card > img { width: min(430px, 100%); margin: auto; }
+.about-brand-details { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 30px; border-top: 1px solid rgba(50,54,117,.2); }
+.about-brand-details > div { min-width: 0; }
+.about-brand-details small, .about-brand-details span { display: block; color: var(--muted); font-size: 9px; line-height: 1.55; letter-spacing: .1em; text-transform: uppercase; }
+.about-brand-details > div:not(.about-experience) strong { display: block; margin-top: 7px; font: 400 18px/1.15 var(--serif); }
+.about-experience { grid-column: 1 / -1; display: flex; align-items: center; gap: 18px; }
+.about-experience strong { color: var(--gold); font: 400 68px/.8 var(--serif); }
 .about-copy h2 { margin: 18px 0 30px; font: 400 clamp(2.6rem, 4.5vw, 4.2rem)/1.02 var(--serif); letter-spacing: -.04em; }
 .about-copy p { color: var(--muted); line-height: 1.8; }
 .about-values { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 35px; padding: 26px 0; border-block: 1px solid var(--line); }
@@ -175,7 +175,8 @@ img { display: block; max-width: 100%; }
 
 .footer { padding: 72px 0 25px; color: rgba(255,255,255,.64); background: #0c0e0c; }
 .footer-grid { display: grid; grid-template-columns: 1.5fr .8fr 1fr; gap: 80px; padding-bottom: 55px; }
-.footer-brand { margin-bottom: 22px; }
+.footer-logo { width: 220px; margin-bottom: 18px; }
+.footer-logo img { width: 100%; filter: brightness(0) invert(1); }
 .footer-grid p { max-width: 340px; line-height: 1.8; font-size: 13px; }
 .footer-grid > div { display: flex; flex-direction: column; gap: 13px; }
 .footer-grid a, .footer-grid span:not(.brand-main,.brand-accent,.brand-tag,.footer-title) { display: flex; align-items: center; gap: 8px; font-size: 12px; }
@@ -300,7 +301,7 @@ img { display: block; max-width: 100%; }
 @media (max-width: 1050px) {
   .main-nav { gap: 18px; }.nav-cta { display: none; }
   .property-grid { grid-template-columns: repeat(2, 1fr); }.property-grid--featured .property-card:last-child { grid-column: 1 / -1; max-width: calc(50% - 12px); justify-self: center; }
-  .about-grid, .contact-grid { gap: 60px; }.experience-stamp { right: -20px; }
+  .about-grid, .contact-grid { gap: 60px; }
   .filters-panel { grid-template-columns: repeat(4, 1fr); }.filters-title { grid-column: 1/-1; }.clear-button { grid-column: 4; }
   .detail-layout { grid-template-columns: 1fr 340px; gap: 45px; }
   .admin-main { padding-inline: 32px; }
@@ -314,7 +315,7 @@ img { display: block; max-width: 100%; }
   .profile-strip { padding: 24px 0; align-items: flex-start; flex-direction: column; gap: 18px; }.profile-quote { font-size: 15px; }.split-heading { grid-template-columns: 1fr; gap: 25px; margin-top: 68px; }.type-grid { grid-template-columns: 1fr; }.type-card { min-height: 220px; border-right: 0; border-bottom: 1px solid var(--line); }.type-card:last-child { border-bottom: 0; }
   .find-section { padding-bottom: 75px; }.featured-section, .about-section, .contact-section { padding: 78px 0; }.featured-heading { align-items: flex-start; flex-direction: column; gap: 22px; }
   .property-grid { grid-template-columns: 1fr; }.property-grid--featured .property-card:last-child { grid-column: auto; max-width: none; }.property-card--compact .property-image-wrap { height: 300px; }
-  .about-grid, .contact-grid { grid-template-columns: 1fr; }.about-grid { gap: 75px; }.about-logo-frame { height: 520px; }.experience-stamp { right: -5px; bottom: -28px; width: 140px; height: 140px; }.about-values { grid-template-columns: 1fr; }.contact-grid { gap: 45px; }.contact-form, .whatsapp-card { padding: 28px; }.field-row, .whatsapp-benefits { grid-template-columns: 1fr; }
+  .about-grid, .contact-grid { grid-template-columns: 1fr; }.about-grid { gap: 55px; }.about-brand-card { min-height: 500px; padding: 42px 28px 32px; }.about-values { grid-template-columns: 1fr; }.contact-grid { gap: 45px; }.contact-form, .whatsapp-card { padding: 28px; }.field-row, .whatsapp-benefits { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 36px; }.footer-bottom { gap: 15px; align-items: flex-start; flex-direction: column; }
   .page-hero { padding: 145px 0 65px; }.page-hero h1 { font-size: 3.4rem; }.filters-panel { grid-template-columns: 1fr; }.filters-title, .clear-button { grid-column: auto; }.results-bar { align-items: flex-start; flex-direction: column; justify-content: center; gap: 8px; }
   .detail-page { padding-top: 74px; }.detail-topbar { height: 60px; }.detail-topbar button { font-size: 0; }.gallery { width: 100%; height: 470px; grid-template-columns: 1fr; }.gallery-thumbs { display: none; }.detail-layout { grid-template-columns: 1fr; gap: 45px; padding-block: 55px 75px; }.detail-specs { overflow-x: auto; }.detail-specs div { min-width: 100px; }.contact-card { position: static; }

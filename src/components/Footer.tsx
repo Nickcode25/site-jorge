@@ -7,9 +7,9 @@ export function Footer() {
     <footer className="footer">
       <div className="site-container footer-grid">
         <div>
-          <div className="brand footer-brand">
-            <span className="brand-main">JORGE</span><span className="brand-accent">SOARES</span><span className="brand-tag">IMÓVEIS</span>
-          </div>
+          <Link to="/" className="footer-logo" aria-label="JLS Negócios Imobiliários — início">
+            <img src="/brand/logo-jls.png" alt="JLS Negócios Imobiliários" />
+          </Link>
           <p>Cada detalhe importa. Trabalho com transparência e visão de longo prazo em cada negociação.</p>
         </div>
         <div>

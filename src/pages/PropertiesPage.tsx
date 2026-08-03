@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { PageLoader } from "@/src/components/PageLoader";
 import { PropertyCard } from "@/src/components/PropertyCard";
 import { useProperties } from "@/src/hooks/useProperties";
+import { PROPERTY_TYPES } from "@/src/types/property";
 
 const perPage = 6;
 
@@ -70,7 +71,7 @@ export function PropertiesPage() {
         <div className="site-container">
           <div className={`filters-panel ${showBedrooms ? "filters-panel--with-bedrooms" : ""}`}>
             <div className="filters-title"><SlidersHorizontal size={19} /><strong>Filtrar imóveis</strong></div>
-            <label>Tipo<select value={type} onChange={(e) => changeType(e.target.value)}><option value="">Todos os tipos</option><option value="apartamento">Apartamentos</option><option value="casa">Casas</option><option value="lote">Lotes</option></select></label>
+            <label>Tipo<select value={type} onChange={(e) => changeType(e.target.value)}><option value="">Todos os tipos</option>{PROPERTY_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
             <label>Cidade<select value={city} onChange={(e) => changeCity(e.target.value)}><option value="">Todas as cidades</option>{cities.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
             <label>Bairro<select value={neighborhood} onChange={(e) => { setNeighborhood(e.target.value); setVisible(perPage); }} disabled={!city}><option value="">{city ? "Todos os bairros" : "Selecione uma cidade"}</option>{neighborhoods.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
             {showBedrooms && <label>Quartos<select value={bedrooms} onChange={(e) => { setBedrooms(e.target.value); setVisible(perPage); }}><option value="">Qualquer</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option></select></label>}

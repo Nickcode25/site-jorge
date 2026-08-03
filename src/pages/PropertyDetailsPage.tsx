@@ -7,6 +7,7 @@ import { formatPrice, PropertyCard } from "@/src/components/PropertyCard";
 import { PageLoader } from "@/src/components/PageLoader";
 import { useProperties } from "@/src/hooks/useProperties";
 import { whatsappUrl } from "@/src/lib/contact";
+import { propertyTypeLabel } from "@/src/types/property";
 
 export function PropertyDetailsPage() {
   const { id } = useParams();
@@ -30,9 +31,9 @@ export function PropertyDetailsPage() {
       </section>
       <section className="site-container detail-layout">
         <article>
-          <span className="property-type property-type--static">{property.tipo}</span>
+          <span className="property-type property-type--static">{propertyTypeLabel(property.tipo)}{property.codigo ? ` · Cód. ${property.codigo}` : ""}</span>
           <h1>{property.titulo}</h1>
-          <div className="detail-address"><MapPin size={18} /> {property.endereco}, {property.bairro} · {property.cidade}</div>
+          <div className="detail-address"><MapPin size={18} /> {property.endereco}, {property.bairro} · {property.cidade}{property.estado ? `/${property.estado}` : ""}</div>
           <div className="detail-specs">
             <div><Maximize2 /><strong>{property.area} m²</strong><span>Área</span></div>
             {property.quartos > 0 && <div><BedDouble /><strong>{property.quartos}</strong><span>Quartos</span></div>}

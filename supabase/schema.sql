@@ -3,12 +3,15 @@
 
 create table if not exists public.imoveis (
   id uuid primary key default gen_random_uuid(),
+  codigo text not null default '',
   titulo text not null,
-  tipo text not null check (tipo in ('apartamento', 'casa', 'lote')),
+  tipo text not null check (tipo in ('apartamento', 'casa', 'chacara', 'cobertura', 'galpao', 'loja', 'lote', 'lote_condominio', 'predio', 'sala', 'sitio')),
   preco numeric(14, 2) not null check (preco >= 0),
+  cep text not null default '',
   endereco text not null,
   bairro text not null,
   cidade text not null,
+  estado text not null default '',
   descricao text not null,
   area numeric(10, 2) not null default 0 check (area >= 0),
   quartos integer not null default 0 check (quartos >= 0),
@@ -22,6 +25,7 @@ create table if not exists public.imoveis (
 create index if not exists imoveis_tipo_idx on public.imoveis (tipo);
 create index if not exists imoveis_destaque_criado_idx on public.imoveis (destaque, criado_em desc);
 create index if not exists imoveis_local_idx on public.imoveis (cidade, bairro);
+create unique index if not exists imoveis_codigo_unique_idx on public.imoveis (codigo) where codigo <> '';
 
 alter table public.imoveis enable row level security;
 

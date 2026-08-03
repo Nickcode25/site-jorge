@@ -252,9 +252,11 @@ img { display: block; max-width: 100%; }
 .not-found > span { color: var(--gold); font: 100px/.8 var(--serif); }.not-found h1 { font: 46px var(--serif); margin: 25px 0 10px; }.not-found p { color: var(--muted); margin-bottom: 30px; }
 
 .login-page { min-height: 100svh; display: grid; grid-template-columns: 1.05fr .95fr; background: var(--paper); }
-.login-visual { position: relative; padding: 45px; color: #fff; background: url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=88") center/cover; display: flex; flex-direction: column; justify-content: space-between; }
-.login-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(12,14,12,.7), rgba(12,14,12,.3) 45%, rgba(12,14,12,.87)); }
+.login-visual { position: relative; padding: 45px; color: #fff; background: url("/brand/properties-hero-jls.png") center/cover; display: flex; flex-direction: column; justify-content: space-between; }
+.login-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,18,55,.76), rgba(24,27,73,.34) 45%, rgba(10,12,40,.9)); }
 .login-visual > *:not(.login-overlay) { position: relative; z-index: 1; }
+.login-brand-logo { width: 230px; display: block; }
+.login-brand-logo img { width: 100%; filter: brightness(0) invert(1); }
 .login-visual blockquote { max-width: 570px; margin: 0; font: 400 clamp(2.2rem, 4vw, 4rem)/1.05 var(--serif); }
 .login-panel { display: grid; place-items: center; padding: 60px; }
 .login-box { width: min(440px, 100%); }

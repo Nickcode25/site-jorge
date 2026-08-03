@@ -13,7 +13,6 @@ export function HomePage() {
     <>
       <section className="hero" style={{ backgroundImage: "url('/brand/hero-jls-v2.png')" }}>
         <div className="hero-overlay" />
-        <div className="hero-lines" aria-hidden="true" />
         <div className="site-container hero-content">
           <div className="hero-kicker"><span /> Especialista imobiliário em Viçosa e região</div>
           <h1>

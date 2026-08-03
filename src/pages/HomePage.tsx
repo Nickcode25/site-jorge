@@ -51,7 +51,7 @@ export function HomePage() {
         <div className="site-container">
           <div className="section-heading featured-heading">
             <div><span className="section-label section-label--gold">Seleção do corretor</span><h2>Imóveis em <em>destaque</em></h2></div>
-            <p>Uma curadoria de oportunidades que unem localização, arquitetura e valor.</p>
+              <p>Uma seleção de oportunidades que unem localização, arquitetura e valor.</p>
           </div>
           {loading ? <PageLoader /> : <div className="property-grid property-grid--featured">{properties.map((property) => <PropertyCard key={property.id} property={property} compact />)}</div>}
           <div className="center-action"><Link to="/imoveis" className="button button--outline-light">Ver todos os imóveis <ArrowRight size={18} /></Link></div>

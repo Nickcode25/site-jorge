@@ -76,7 +76,7 @@ export function HomePage() {
               <span><Clock3 /> Disponibilidade real</span>
               <span><CheckCircle2 /> Negociação transparente</span>
             </div>
-            <Link to="/#contato" className="text-link">Vamos conversar <ArrowRight size={17} /></Link>
+            <a href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer" className="text-link">Vamos conversar <ArrowRight size={17} /></a>
           </div>
         </div>
       </section>

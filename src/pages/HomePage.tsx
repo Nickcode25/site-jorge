@@ -61,7 +61,9 @@ export function HomePage() {
       <section className="about-section section-light" id="sobre">
         <div className="site-container about-grid">
           <div className="about-visual">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=90" alt="JLS Negócios Imobiliários" />
+            <div className="about-logo-frame">
+              <img className="about-brand-logo" src="/brand/about-jls-logo.png" alt="Logo da JLS Negócios Imobiliários" />
+            </div>
             <div className="experience-stamp"><strong>12</strong><span>anos conectando<br />pessoas e lugares</span></div>
           </div>
           <div className="about-copy">

@@ -61,7 +61,9 @@ export function HomePage() {
       <section className="about-section section-light" id="sobre">
         <div className="site-container about-grid">
           <div className="about-visual">
-            <img className="about-brand-logo-only" src="/brand/about-jls-logo.png" alt="Logo da JLS Negócios Imobiliários" />
+            <div className="about-logo-lift">
+              <img className="about-brand-logo-only" src="/brand/about-jls-logo.png" alt="Logo da JLS Negócios Imobiliários" />
+            </div>
           </div>
           <div className="about-copy">
             <span className="section-label">Sobre JLS Negócios Imobiliários</span>

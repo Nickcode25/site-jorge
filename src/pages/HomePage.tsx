@@ -17,7 +17,10 @@ export function HomePage() {
         <div className="hero-lines" aria-hidden="true" />
         <div className="site-container hero-content">
           <div className="hero-kicker"><span /> Especialista imobiliário em Viçosa e região</div>
-          <h1>Toda grande história<br />tem um <em>endereço.</em></h1>
+          <h1>
+            <span className="hero-title-line">Toda grande história</span><br />
+            <span className="hero-title-line">tem um <em>endereço.</em></span>
+          </h1>
           <p>Imóveis escolhidos a dedo. Uma experiência guiada com transparência, segurança e confiança em cada etapa.</p>
           <div className="hero-actions">
             <Link className="button button--gold" to="/imoveis">Explorar imóveis <ArrowRight size={18} /></Link>

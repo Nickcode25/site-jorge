@@ -64,7 +64,7 @@ export function PropertiesPage() {
   return (
     <main className="inner-page">
       <section className="page-hero page-hero--properties">
-        <div className="site-container"><span className="section-label section-label--gold">Curadoria JLS Negócios Imobiliários</span><h1>Imóveis para viver<br /><em>boas histórias.</em></h1><p>Explore nossa seleção e encontre o endereço que conversa com o seu momento.</p></div>
+        <div className="site-container"><span className="section-label section-label--gold">Portfólio JLS Negócios Imobiliários</span><h1>Imóveis para viver<br /><em>boas histórias.</em></h1><p>Explore nossa seleção e encontre o endereço que conversa com o seu momento.</p></div>
       </section>
       <section className="list-section section-light">
         <div className="site-container">

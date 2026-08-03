@@ -28,10 +28,8 @@ export function Header() {
   return (
     <header className={`site-header ${overHero ? "site-header--hero" : "site-header--solid"}`}>
       <div className="site-container header-inner">
-        <Link to="/" className="brand" aria-label="Jorge Soares — início" onClick={() => setOpen(false)}>
-          <span className="brand-main">JORGE</span>
-          <span className="brand-accent">SOARES</span>
-          <span className="brand-tag">IMÓVEIS</span>
+        <Link to="/" className="header-brand" aria-label="JLS Negócios Imobiliários — início" onClick={() => setOpen(false)}>
+          <img src="/brand/logo-jls.png" alt="JLS Negócios Imobiliários" />
         </Link>
 
         <button className="menu-button" onClick={() => setOpen((value) => !value)} aria-label="Abrir menu" aria-expanded={open}>

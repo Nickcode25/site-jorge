@@ -1,4 +1,4 @@
-import type { Property } from "@/src/types/property";
+import { normalizePropertyRow } from "@/src/lib/property-config";
 
 export const propertyImages = {
   exterior: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=88",
@@ -9,7 +9,7 @@ export const propertyImages = {
   dining: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1800&q=88",
 };
 
-export const mockProperties: Property[] = [
+const mockRows = [
   {
     id: "alto-das-palmeiras",
     codigo: "1001",
@@ -131,3 +131,5 @@ export const mockProperties: Property[] = [
     criado_em: "2026-05-27T12:00:00Z",
   },
 ];
+
+export const mockProperties = mockRows.map((property) => normalizePropertyRow(property));

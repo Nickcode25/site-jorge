@@ -1,12 +1,13 @@
 "use client";
 
-import { ArrowLeft, Bath, BedDouble, CarFront, ChevronLeft, ChevronRight, MapPin, Maximize2, MessageCircle, Share2 } from "lucide-react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, MapPin, Maximize2, MessageCircle, Share2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { formatPrice, PropertyCard } from "@/src/components/PropertyCard";
 import { PageLoader } from "@/src/components/PageLoader";
 import { useProperties } from "@/src/hooks/useProperties";
 import { whatsappUrl } from "@/src/lib/contact";
+import { displaySpecifications } from "@/src/lib/property-config";
 import { propertyTypeLabel } from "@/src/types/property";
 
 export function PropertyDetailsPage() {
@@ -20,6 +21,7 @@ export function PropertyDetailsPage() {
   if (!property) return <main className="inner-page not-found"><span>404</span><h1>Imóvel não encontrado</h1><p>Este anúncio pode ter sido atualizado ou removido.</p><Link className="button button--gold" to="/imoveis">Voltar aos imóveis</Link></main>;
 
   const images = property.imagens.length ? property.imagens : [""];
+  const specifications = displaySpecifications(property);
   const changeImage = (direction: number) => setImageIndex((current) => (current + direction + images.length) % images.length);
 
   return (
@@ -34,13 +36,9 @@ export function PropertyDetailsPage() {
           <span className="property-type property-type--static">{propertyTypeLabel(property.tipo)}{property.codigo ? ` · Cód. ${property.codigo}` : ""}</span>
           <h1>{property.titulo}</h1>
           <div className="detail-address"><MapPin size={18} /> {property.endereco}, {property.bairro} · {property.cidade}{property.estado ? `/${property.estado}` : ""}</div>
-          <div className="detail-specs">
-            <div><Maximize2 /><strong>{property.area} m²</strong><span>Área</span></div>
-            {property.quartos > 0 && <div><BedDouble /><strong>{property.quartos}</strong><span>Quartos</span></div>}
-            {property.banheiros > 0 && <div><Bath /><strong>{property.banheiros}</strong><span>Banheiros</span></div>}
-            {property.vagas > 0 && <div><CarFront /><strong>{property.vagas}</strong><span>Vagas</span></div>}
-          </div>
+          {specifications.length > 0 && <div className="detail-specs">{specifications.map((item) => <div key={item.key}><Maximize2 /><strong>{item.value}</strong><span>{item.label}</span></div>)}</div>}
           <div className="detail-description"><span className="section-label">Sobre o imóvel</span><h2>Um lugar pensado<br />para viver bem.</h2><p>{property.descricao}</p><p>Entre em contato para receber a ficha completa, consultar disponibilidade e agendar uma visita personalizada.</p></div>
+          {property.caracteristicas.length > 0 && <div className="detail-characteristics"><span className="section-label">Características</span><h2>O que este imóvel oferece</h2><ul>{property.caracteristicas.map((item) => <li key={item.id}><Check /> {item.nome}</li>)}</ul></div>}
         </article>
         <aside className="contact-card">
           <span>Valor do imóvel</span><strong>{formatPrice(property.preco)}</strong><small>Condições sujeitas a confirmação</small>

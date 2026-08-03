@@ -1,22 +1,30 @@
 "use client";
 
-import { Building2, Edit3, Eye, ImagePlus, LayoutDashboard, LogOut, Plus, Save, Star, Trash2, X } from "lucide-react";
+import { Building2, Check, Edit3, Eye, ImagePlus, LayoutDashboard, LogOut, Plus, Save, Star, Trash2, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { formatPrice } from "@/src/components/PropertyCard";
 import { useAuth } from "@/src/hooks/useAuth";
 import { cepDigits, formatCep, lookupAddressByCep } from "@/src/lib/address";
+import {
+  DEFAULT_CHARACTERISTICS,
+  SPECIFICATIONS_BY_TYPE,
+  applicableCharacteristics,
+  legacyColumnsFromSpecifications,
+  normalizePropertyRow,
+} from "@/src/lib/property-config";
 import { supabase } from "@/src/lib/supabase";
-import { PROPERTY_TYPES, propertyTypeLabel, type Property, type PropertyFormData, type PropertyType } from "@/src/types/property";
+import { PROPERTY_TYPES, propertyTypeLabel, type CharacteristicDefinition, type Property, type PropertyFormData, type PropertyType, type SpecificationValue } from "@/src/types/property";
 
 const emptyForm: PropertyFormData = {
-  codigo: "", titulo: "", tipo: "apartamento", preco: 0, cep: "", endereco: "", bairro: "", cidade: "", estado: "", descricao: "", area: 0,
+  codigo: "", titulo: "", tipo: "apartamento", preco: 0, cep: "", endereco: "", bairro: "", cidade: "", estado: "", status: "disponivel", descricao: "", especificacoes: {}, caracteristicas: [], area: 0,
   quartos: 0, banheiros: 0, vagas: 0, destaque: false, imagens: [],
 };
 
 export function AdminPage() {
   const { user, loading } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
+  const [characteristics, setCharacteristics] = useState<CharacteristicDefinition[]>(DEFAULT_CHARACTERISTICS);
   const [form, setForm] = useState<PropertyFormData>(emptyForm);
   const [files, setFiles] = useState<File[]>([]);
   const [editing, setEditing] = useState(false);
@@ -27,17 +35,59 @@ export function AdminPage() {
 
   async function loadProperties() {
     if (!supabase) return;
-    const { data } = await supabase.from("imoveis").select("*").order("criado_em", { ascending: false });
-    setProperties((data as Property[]) ?? []);
+    const { data } = await supabase.from("imoveis").select("*, imovel_caracteristicas(caracteristica_id, caracteristicas(id, nome, categoria))").order("criado_em", { ascending: false });
+    setProperties((data ?? []).map((item) => normalizePropertyRow(item as Record<string, unknown>)));
   }
 
-  useEffect(() => { if (user) void loadProperties(); }, [user]);
+  async function loadCharacteristics() {
+    if (!supabase) return;
+    const { data } = await supabase.from("caracteristicas").select("id, nome, categoria, tipos_aplicaveis").order("nome");
+    if (data?.length) setCharacteristics(data as CharacteristicDefinition[]);
+  }
+
+  useEffect(() => { if (user) void Promise.all([loadProperties(), loadCharacteristics()]); }, [user]);
   if (loading) return <div className="admin-loading">Carregando painel...</div>;
   if (!user || !supabase) return <Navigate to="/admin/login" replace />;
 
+  const specificationDefinitions = SPECIFICATIONS_BY_TYPE[form.tipo];
+  const availableCharacteristics = applicableCharacteristics(form.tipo, characteristics);
+  const characteristicGroups = ([
+    ["interna", "Internas"],
+    ["externa", "Externas"],
+    ["geral", "Gerais"],
+  ] as const).map(([category, label]) => ({
+    category,
+    label,
+    items: availableCharacteristics.filter((item) => item.categoria === category),
+  })).filter((group) => group.items.length > 0);
+
   function openCreate() { setForm(emptyForm); setFiles([]); setMessage(null); setCepStatus("idle"); setEditing(true); }
-  function openEdit(property: Property) { setForm({ ...emptyForm, ...property, codigo: property.codigo ?? "", cep: formatCep(property.cep ?? ""), estado: property.estado ?? "" }); setFiles([]); setMessage(null); setCepStatus("idle"); setEditing(true); }
+  function openEdit(property: Property) { setForm({ ...emptyForm, ...property, codigo: property.codigo ?? "", cep: formatCep(property.cep ?? ""), estado: property.estado ?? "", especificacoes: property.especificacoes ?? {}, caracteristicas: property.caracteristicas.map((item) => item.id) }); setFiles([]); setMessage(null); setCepStatus("idle"); setEditing(true); }
   function update<K extends keyof PropertyFormData>(key: K, value: PropertyFormData[K]) { setForm((current) => ({ ...current, [key]: value })); }
+
+  function changePropertyType(type: PropertyType) {
+    const hasDynamicData = Object.keys(form.especificacoes).length > 0 || form.caracteristicas.length > 0;
+    if (hasDynamicData && !confirm("Ao alterar o tipo, as especificações e características já preenchidas serão limpas. Deseja continuar?")) return;
+    setForm((current) => ({ ...current, tipo: type, especificacoes: {}, caracteristicas: [] }));
+  }
+
+  function updateSpecification(key: string, value: SpecificationValue | "") {
+    setForm((current) => {
+      const next = { ...current.especificacoes };
+      if (value === "") delete next[key];
+      else next[key] = value;
+      return { ...current, especificacoes: next };
+    });
+  }
+
+  function toggleCharacteristic(id: string) {
+    setForm((current) => ({
+      ...current,
+      caracteristicas: current.caracteristicas.includes(id)
+        ? current.caracteristicas.filter((item) => item !== id)
+        : [...current.caracteristicas, id],
+    }));
+  }
 
   async function completeAddress(cep: string) {
     const lookupId = ++cepLookupId.current;
@@ -82,12 +132,23 @@ export function AdminPage() {
     event.preventDefault(); setSaving(true); setMessage(null);
     try {
       const uploaded = await uploadImages();
-      const payload = { ...form, imagens: [...(form.imagens ?? []), ...uploaded] };
-      const { id, ...values } = payload;
+      const legacy = legacyColumnsFromSpecifications(form.tipo, form.especificacoes);
+      const payload = { ...form, ...legacy, imagens: [...(form.imagens ?? []), ...uploaded] };
+      const { id, caracteristicas: selectedCharacteristics, ...values } = payload;
       const result = id
-        ? await supabase!.from("imoveis").update(values).eq("id", id)
-        : await supabase!.from("imoveis").insert(values);
+        ? await supabase!.from("imoveis").update(values).eq("id", id).select("id").single()
+        : await supabase!.from("imoveis").insert(values).select("id").single();
       if (result.error) throw result.error;
+      const propertyId = result.data.id as string;
+      const clearResult = await supabase!.from("imovel_caracteristicas").delete().eq("imovel_id", propertyId);
+      if (clearResult.error) throw clearResult.error;
+      if (selectedCharacteristics.length) {
+        const linkResult = await supabase!.from("imovel_caracteristicas").insert(selectedCharacteristics.map((characteristicId) => ({
+          imovel_id: propertyId,
+          caracteristica_id: characteristicId,
+        })));
+        if (linkResult.error) throw linkResult.error;
+      }
       await loadProperties(); setEditing(false); setMessage("Imóvel salvo com sucesso.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível salvar o imóvel.");
@@ -126,9 +187,19 @@ export function AdminPage() {
 
       {editing && <div className="modal-backdrop" role="presentation"><div className="property-modal" role="dialog" aria-modal="true" aria-label={form.id ? "Editar imóvel" : "Novo imóvel"}><header><div><span className="section-label">Cadastro de imóvel</span><h2>{form.id ? "Editar imóvel" : "Novo imóvel"}</h2></div><button onClick={() => setEditing(false)} aria-label="Fechar"><X /></button></header>
         <form onSubmit={saveProperty}>
-          <div className="form-section"><h3>Informações principais</h3><label>Título do anúncio<input required value={form.titulo} onChange={(e) => update("titulo", e.target.value)} placeholder="Ex.: Apartamento Jardins Essence" /></label><label>Código do imóvel<input required inputMode="numeric" pattern="[0-9]+" value={form.codigo} onChange={(e) => update("codigo", e.target.value.replace(/\D/g, ""))} placeholder="Ex.: 1024" /></label><label>Tipo<select value={form.tipo} onChange={(e) => update("tipo", e.target.value as PropertyType)}>{PROPERTY_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label><label>Preço (R$)<input required min="0" type="number" value={form.preco || ""} onChange={(e) => update("preco", Number(e.target.value))} /></label></div>
+          <div className="form-section"><h3>Informações principais</h3><label>Título do anúncio<input required value={form.titulo} onChange={(e) => update("titulo", e.target.value)} placeholder="Ex.: Apartamento Jardins Essence" /></label><label>Código do imóvel<input required inputMode="numeric" pattern="[0-9]+" value={form.codigo} onChange={(e) => update("codigo", e.target.value.replace(/\D/g, ""))} placeholder="Ex.: 1024" /></label><label>Tipo<select value={form.tipo} onChange={(e) => changePropertyType(e.target.value as PropertyType)}>{PROPERTY_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><small className="field-helper">As especificações abaixo mudam conforme o tipo.</small></label><label>Preço (R$)<input required min="0" type="number" value={form.preco || ""} onChange={(e) => update("preco", Number(e.target.value))} /></label><label>Status<select value={form.status} onChange={(e) => update("status", e.target.value as PropertyFormData["status"])}><option value="disponivel">Disponível</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option><option value="inativo">Inativo</option></select></label></div>
           <div className="form-section form-section--location"><h3>Localização</h3><label>CEP<input required inputMode="numeric" autoComplete="postal-code" value={form.cep} onChange={(e) => changeCep(e.target.value)} placeholder="00000-000" maxLength={9} />{cepStatus === "loading" && <small className="field-helper">Buscando endereço...</small>}{cepStatus === "success" && <small className="field-helper field-helper--success">Endereço preenchido. Confira e acrescente o número.</small>}{cepStatus === "error" && <small className="field-helper field-helper--error">CEP não encontrado. Preencha os campos manualmente.</small>}</label><label className="span-2">Endereço<input required autoComplete="street-address" value={form.endereco} onChange={(e) => update("endereco", e.target.value)} placeholder="Rua, avenida e número" /></label><label>Bairro<input required value={form.bairro} onChange={(e) => update("bairro", e.target.value)} /></label><label>Cidade<input required value={form.cidade} onChange={(e) => update("cidade", e.target.value)} /></label><label>UF<input required value={form.estado} onChange={(e) => update("estado", e.target.value.toUpperCase().slice(0, 2))} placeholder="MG" maxLength={2} /></label></div>
-          <div className="form-section form-section--specs"><h3>Características</h3>{(["area", "quartos", "banheiros", "vagas"] as const).map((field) => <label key={field}>{field === "area" ? "Área (m²)" : field[0].toUpperCase() + field.slice(1)}<input required min="0" type="number" value={form[field] || ""} onChange={(e) => update(field, Number(e.target.value))} /></label>)}</div>
+          <div className="form-section form-section--specs"><h3>Especificações</h3><p className="form-section-intro">Preencha somente as informações disponíveis para este imóvel.</p>{specificationDefinitions.map((definition) => {
+            const value = form.especificacoes[definition.key];
+            const label = `${definition.label}${definition.unit ? ` (${definition.unit})` : ""}${definition.optional ? " · opcional" : ""}`;
+            if (definition.type === "select") return <label key={definition.key}>{label}<select value={typeof value === "string" ? value : ""} onChange={(e) => updateSpecification(definition.key, e.target.value)}><option value="">Não informado</option>{definition.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>;
+            if (definition.type === "boolean") return <label key={definition.key}>{label}<select value={typeof value === "boolean" ? String(value) : ""} onChange={(e) => updateSpecification(definition.key, e.target.value === "" ? "" : e.target.value === "true")}><option value="">Não informado</option><option value="true">Sim</option><option value="false">Não</option></select></label>;
+            return <label key={definition.key}>{label}<input min="0" step={definition.step ?? "1"} type="number" value={typeof value === "number" ? value : ""} onChange={(e) => updateSpecification(definition.key, e.target.value === "" ? "" : Number(e.target.value))} /></label>;
+          })}</div>
+          <div className="form-section form-section--characteristics"><h3>Características</h3><p className="form-section-intro">Marque somente os itens presentes no imóvel. A lista já está filtrada para {propertyTypeLabel(form.tipo).toLowerCase()}.</p>{characteristicGroups.map((group) => <fieldset key={group.category} className="characteristic-group"><legend>{group.label}</legend><div className="characteristic-options">{group.items.map((item) => {
+            const checked = form.caracteristicas.includes(item.id);
+            return <label key={item.id} className={`characteristic-option ${checked ? "is-checked" : ""}`}><input type="checkbox" checked={checked} onChange={() => toggleCharacteristic(item.id)} /><span className="characteristic-check"><Check /></span><span>{item.nome}</span></label>;
+          })}</div></fieldset>)}</div>
           <div className="form-section"><h3>Apresentação</h3><label className="span-2">Descrição<textarea required rows={5} value={form.descricao} onChange={(e) => update("descricao", e.target.value)} /></label><label className="span-2 upload-field"><span><ImagePlus /> Adicionar fotos</span><input type="file" accept="image/*" multiple onChange={(e) => setFiles(Array.from(e.target.files ?? []))} /><small>{files.length ? `${files.length} foto(s) selecionada(s)` : "PNG, JPG ou WebP · múltiplos arquivos"}</small></label><label className="span-2 switch-row"><input type="checkbox" checked={form.destaque} onChange={(e) => update("destaque", e.target.checked)} /><span><b>Exibir na página inicial</b><small>Marcar como imóvel em destaque</small></span></label></div>
           {message && <div className="form-message">{message}</div>}
           <footer><button type="button" className="button button--outline-dark" onClick={() => setEditing(false)}>Cancelar</button><button className="button button--gold" disabled={saving}><Save size={17} /> {saving ? "Salvando..." : "Salvar imóvel"}</button></footer>

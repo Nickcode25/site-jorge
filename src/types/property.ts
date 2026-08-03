@@ -14,6 +14,21 @@ export const PROPERTY_TYPES = [
 
 export type PropertyType = (typeof PROPERTY_TYPES)[number]["value"];
 
+export type PropertyStatus = "disponivel" | "reservado" | "vendido" | "inativo";
+export type SpecificationValue = string | number | boolean;
+export type PropertySpecifications = Record<string, SpecificationValue>;
+export type CharacteristicCategory = "interna" | "externa" | "geral";
+
+export interface PropertyCharacteristic {
+  id: string;
+  nome: string;
+  categoria: CharacteristicCategory;
+}
+
+export interface CharacteristicDefinition extends PropertyCharacteristic {
+  tipos_aplicaveis: PropertyType[];
+}
+
 export function propertyTypeLabel(type: PropertyType | string) {
   return PROPERTY_TYPES.find((option) => option.value === type)?.label ?? type;
 }
@@ -29,7 +44,10 @@ export interface Property {
   bairro: string;
   cidade: string;
   estado: string;
+  status: PropertyStatus;
   descricao: string;
+  especificacoes: PropertySpecifications;
+  caracteristicas: PropertyCharacteristic[];
   area: number;
   quartos: number;
   banheiros: number;
@@ -39,7 +57,8 @@ export interface Property {
   criado_em: string;
 }
 
-export type PropertyFormData = Omit<Property, "id" | "criado_em" | "imagens"> & {
+export type PropertyFormData = Omit<Property, "id" | "criado_em" | "imagens" | "caracteristicas"> & {
   id?: string;
   imagens?: string[];
+  caracteristicas: string[];
 };

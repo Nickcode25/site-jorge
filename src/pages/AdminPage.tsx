@@ -27,15 +27,20 @@ const emptyForm: PropertyFormData = {
   quartos: 0, banheiros: 0, vagas: 0, destaque: false, imagens: [],
 };
 
-const wholeCurrencyFormatter = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 });
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
 
-function formatCurrencyInteger(value: number) {
-  return value > 0 ? wholeCurrencyFormatter.format(Math.trunc(value)) : "";
+function formatCurrencyInput(value: number) {
+  return value > 0 ? currencyFormatter.format(value) : "";
 }
 
-function parseCurrencyInteger(value: string) {
-  const integerPart = value.includes(",") ? value.split(",")[0] : value;
-  return Number(integerPart.replace(/\D/g, "")) || 0;
+function parseCurrencyInput(value: string) {
+  const digits = value.replace(/\D/g, "");
+  return digits ? Number(digits) / 100 : 0;
 }
 
 export function AdminPage() {
@@ -238,7 +243,7 @@ export function AdminPage() {
 
       {editing && <div className="modal-backdrop" role="presentation"><div className="property-modal" role="dialog" aria-modal="true" aria-label={form.id ? "Editar imóvel" : "Novo imóvel"}><header><div><span className="section-label">Cadastro de imóvel</span><h2>{form.id ? "Editar imóvel" : "Novo imóvel"}</h2></div><button onClick={closeEditor} aria-label="Fechar"><X /></button></header>
         <form onSubmit={saveProperty}>
-          <div className="form-section form-section--main"><h3>Informações principais</h3><label className="main-field-half">Título do anúncio<input required value={form.titulo} onChange={(e) => update("titulo", e.target.value)} placeholder="Ex.: Apartamento Jardins Essence" /></label><label className="main-field-half">Código do imóvel<input required inputMode="numeric" pattern="[0-9]+" value={form.codigo} onChange={(e) => update("codigo", e.target.value.replace(/\D/g, ""))} placeholder="Ex.: 1024" /></label><label className="main-field-third">Tipo<select value={form.tipo} onChange={(e) => changePropertyType(e.target.value as PropertyType)}>{PROPERTY_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><small className="field-helper">Os campos abaixo mudam conforme o tipo.</small></label><label className="main-field-third">Preço<div className="currency-input"><span>R$</span><input required inputMode="numeric" value={formatCurrencyInteger(form.preco)} onChange={(e) => update("preco", parseCurrencyInteger(e.target.value))} placeholder="0" aria-label="Preço do imóvel em reais" /><span>,00</span></div></label><label className="main-field-third">Status<select value={form.status} onChange={(e) => update("status", e.target.value as PropertyFormData["status"])}><option value="disponivel">Disponível</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option><option value="inativo">Inativo</option></select></label></div>
+          <div className="form-section form-section--main"><h3>Informações principais</h3><label className="main-field-half">Título do anúncio<input required value={form.titulo} onChange={(e) => update("titulo", e.target.value)} placeholder="Ex.: Apartamento Jardins Essence" /></label><label className="main-field-half">Código do imóvel<input required inputMode="numeric" pattern="[0-9]+" value={form.codigo} onChange={(e) => update("codigo", e.target.value.replace(/\D/g, ""))} placeholder="Ex.: 1024" /></label><label className="main-field-third main-field-type">Tipo<select value={form.tipo} onChange={(e) => changePropertyType(e.target.value as PropertyType)}>{PROPERTY_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><small className="field-helper">Os campos abaixo mudam conforme o tipo.</small></label><label className="main-field-third">Preço<input className="currency-mask-input" required inputMode="numeric" value={formatCurrencyInput(form.preco)} onChange={(e) => update("preco", parseCurrencyInput(e.target.value))} placeholder="R$ 0,00" aria-label="Preço do imóvel em reais" /></label><label className="main-field-third">Status<select value={form.status} onChange={(e) => update("status", e.target.value as PropertyFormData["status"])}><option value="disponivel">Disponível</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option><option value="inativo">Inativo</option></select></label></div>
           <div className="form-section form-section--location"><h3>Localização</h3><label>CEP<input required inputMode="numeric" autoComplete="postal-code" value={form.cep} onChange={(e) => changeCep(e.target.value)} placeholder="00000-000" maxLength={9} />{cepStatus === "loading" && <small className="field-helper">Buscando endereço...</small>}{cepStatus === "success" && <small className="field-helper field-helper--success">Endereço preenchido. Confira os dados e informe o número.</small>}{cepStatus === "error" && <small className="field-helper field-helper--error">CEP não encontrado. Preencha os campos manualmente.</small>}</label><label className="span-2">Endereço<input required autoComplete="street-address" value={form.endereco} onChange={(e) => update("endereco", e.target.value)} placeholder="Rua ou avenida" /></label><label>Bairro<input required value={form.bairro} onChange={(e) => update("bairro", e.target.value)} /></label><label>Cidade<input required value={form.cidade} onChange={(e) => update("cidade", e.target.value)} /></label><label>UF<input required value={form.estado} onChange={(e) => update("estado", e.target.value.toUpperCase().slice(0, 2))} placeholder="MG" maxLength={2} /></label><label>Número<input required value={form.numero} onChange={(e) => update("numero", e.target.value)} placeholder="Ex.: 120" /></label><label className="span-2">Complemento<input value={form.complemento} onChange={(e) => update("complemento", e.target.value)} placeholder="Apartamento, bloco, sala ou ponto de referência" /></label></div>
           <div className="form-section form-section--specs"><h3>Especificações</h3><p className="form-section-intro">Preencha somente as informações disponíveis para este imóvel.</p>{specificationDefinitions.map((definition) => {
             const value = form.especificacoes[definition.key];

@@ -5,14 +5,13 @@ import { PropertyCard } from "@/src/components/PropertyCard";
 import { PropertyTypeButtons } from "@/src/components/PropertyTypeButtons";
 import { useProperties } from "@/src/hooks/useProperties";
 import { whatsappDisplay, whatsappUrl } from "@/src/lib/contact";
-import { propertyImages } from "@/src/lib/mock-data";
 
 export function HomePage() {
   const { properties, loading } = useProperties(true);
 
   return (
     <>
-      <section className="hero" style={{ backgroundImage: `url(${propertyImages.exterior})` }}>
+      <section className="hero" style={{ backgroundImage: "url('/brand/hero-jls-v2.png')" }}>
         <div className="hero-overlay" />
         <div className="hero-lines" aria-hidden="true" />
         <div className="site-container hero-content">

@@ -80,6 +80,7 @@ img { display: block; max-width: 100%; }
 .profile-strip { min-height: 128px; display: flex; align-items: center; justify-content: space-between; gap: 48px; border-bottom: 1px solid var(--line); }
 .profile-intro { display: flex; align-items: center; gap: 18px; }
 .profile-intro img { width: 64px; height: 64px; object-fit: cover; filter: grayscale(1); border-radius: 50%; }
+.profile-intro img.profile-symbol { padding: 5px; object-fit: contain; filter: none; background: #fff; }
 .profile-intro span { color: var(--gold); text-transform: uppercase; font-size: 9px; letter-spacing: .2em; }
 .profile-intro h2 { font: 400 25px/1 var(--serif); margin: 5px 0; }
 .profile-intro p { margin: 0; color: var(--muted); font-size: 11px; }
@@ -94,16 +95,16 @@ img { display: block; max-width: 100%; }
 .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); }
 .type-card { position: relative; min-height: 265px; padding: 33px; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--line); overflow: hidden; transition: .35s; }
 .type-card:last-child { border-right: 0; }
-.type-card::before { content: ""; position: absolute; inset: 100% 0 0; background: var(--ink); transition: .35s cubic-bezier(.2,.8,.2,1); }
+.type-card::before { content: ""; position: absolute; inset: 100% 0 0; background: var(--gold); transition: .35s cubic-bezier(.2,.8,.2,1); }
 .type-card > * { position: relative; z-index: 1; }
 .type-card:hover { color: #fff; transform: translateY(-5px); box-shadow: 0 22px 50px rgba(17,19,16,.15); }
 .type-card:hover::before { inset: 0; }
-.type-index { position: absolute; right: 26px; top: 24px; color: var(--gold); font: italic 14px var(--serif); }
+.type-index { position: absolute; right: 26px; top: 24px; color: var(--ink); font: italic 14px var(--serif); }
 .type-card h3 { margin: 0 0 8px; font: 400 28px var(--serif); }
 .type-card p { margin: 0; color: var(--muted); font-size: 12px; transition: .35s; }
 .type-card:hover p { color: rgba(255,255,255,.6); }
 .type-link { display: flex; justify-content: space-between; align-items: center; font-size: 9px; letter-spacing: .16em; text-transform: uppercase; }
-.type-link b { font-size: 20px; color: var(--gold); }
+.type-link b { font-size: 20px; color: var(--ink); }
 
 .featured-section { padding: 118px 0; color: #fff; background: var(--ink); }
 .featured-heading { display: flex; justify-content: space-between; align-items: end; gap: 50px; }

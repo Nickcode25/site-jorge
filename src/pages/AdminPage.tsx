@@ -16,17 +16,34 @@ import {
 import { supabase } from "@/src/lib/supabase";
 import { PROPERTY_TYPES, propertyTypeLabel, type CharacteristicDefinition, type Property, type PropertyFormData, type PropertyType, type SpecificationValue } from "@/src/types/property";
 
+interface SelectedPhoto {
+  id: string;
+  file: File;
+  previewUrl: string;
+}
+
 const emptyForm: PropertyFormData = {
-  codigo: "", titulo: "", tipo: "apartamento", preco: 0, cep: "", endereco: "", bairro: "", cidade: "", estado: "", status: "disponivel", descricao: "", especificacoes: {}, caracteristicas: [], area: 0,
+  codigo: "", titulo: "", tipo: "apartamento", preco: 0, cep: "", endereco: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "", status: "disponivel", descricao: "", especificacoes: {}, caracteristicas: [], area: 0,
   quartos: 0, banheiros: 0, vagas: 0, destaque: false, imagens: [],
 };
+
+const wholeCurrencyFormatter = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 });
+
+function formatCurrencyInteger(value: number) {
+  return value > 0 ? wholeCurrencyFormatter.format(Math.trunc(value)) : "";
+}
+
+function parseCurrencyInteger(value: string) {
+  const integerPart = value.includes(",") ? value.split(",")[0] : value;
+  return Number(integerPart.replace(/\D/g, "")) || 0;
+}
 
 export function AdminPage() {
   const { user, loading } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
   const [characteristics, setCharacteristics] = useState<CharacteristicDefinition[]>(DEFAULT_CHARACTERISTICS);
   const [form, setForm] = useState<PropertyFormData>(emptyForm);
-  const [files, setFiles] = useState<File[]>([]);
+  const [selectedPhotos, setSelectedPhotos] = useState<SelectedPhoto[]>([]);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -61,8 +78,16 @@ export function AdminPage() {
     items: availableCharacteristics.filter((item) => item.categoria === category),
   })).filter((group) => group.items.length > 0);
 
-  function openCreate() { setForm(emptyForm); setFiles([]); setMessage(null); setCepStatus("idle"); setEditing(true); }
-  function openEdit(property: Property) { setForm({ ...emptyForm, ...property, codigo: property.codigo ?? "", cep: formatCep(property.cep ?? ""), estado: property.estado ?? "", especificacoes: property.especificacoes ?? {}, caracteristicas: property.caracteristicas.map((item) => item.id) }); setFiles([]); setMessage(null); setCepStatus("idle"); setEditing(true); }
+  function clearSelectedPhotos() {
+    setSelectedPhotos((current) => {
+      current.forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
+      return [];
+    });
+  }
+
+  function closeEditor() { clearSelectedPhotos(); setEditing(false); }
+  function openCreate() { clearSelectedPhotos(); setForm(emptyForm); setMessage(null); setCepStatus("idle"); setEditing(true); }
+  function openEdit(property: Property) { clearSelectedPhotos(); setForm({ ...emptyForm, ...property, codigo: property.codigo ?? "", cep: formatCep(property.cep ?? ""), estado: property.estado ?? "", numero: property.numero ?? "", complemento: property.complemento ?? "", especificacoes: property.especificacoes ?? {}, caracteristicas: property.caracteristicas.map((item) => item.id) }); setMessage(null); setCepStatus("idle"); setEditing(true); }
   function update<K extends keyof PropertyFormData>(key: K, value: PropertyFormData[K]) { setForm((current) => ({ ...current, [key]: value })); }
 
   function changePropertyType(type: PropertyType) {
@@ -87,6 +112,32 @@ export function AdminPage() {
         ? current.caracteristicas.filter((item) => item !== id)
         : [...current.caracteristicas, id],
     }));
+  }
+
+  function addPhotos(fileList: FileList | null) {
+    if (!fileList?.length) return;
+    setSelectedPhotos((current) => {
+      const knownFiles = new Set(current.map((photo) => `${photo.file.name}-${photo.file.size}-${photo.file.lastModified}`));
+      const additions = Array.from(fileList).filter((file) => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+        if (!file.type.startsWith("image/") || knownFiles.has(key)) return false;
+        knownFiles.add(key);
+        return true;
+      }).map((file) => ({ id: crypto.randomUUID(), file, previewUrl: URL.createObjectURL(file) }));
+      return [...current, ...additions];
+    });
+  }
+
+  function removeSelectedPhoto(id: string) {
+    setSelectedPhotos((current) => current.filter((photo) => {
+      if (photo.id !== id) return true;
+      URL.revokeObjectURL(photo.previewUrl);
+      return false;
+    }));
+  }
+
+  function removeStoredPhoto(url: string) {
+    update("imagens", (form.imagens ?? []).filter((image) => image !== url));
   }
 
   async function completeAddress(cep: string) {
@@ -118,7 +169,7 @@ export function AdminPage() {
 
   async function uploadImages() {
     const urls: string[] = [];
-    for (const file of files) {
+    for (const { file } of selectedPhotos) {
       const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
       const path = `${crypto.randomUUID()}/${safeName}`;
       const { error } = await supabase!.storage.from("imoveis").upload(path, file, { upsert: false });
@@ -149,7 +200,7 @@ export function AdminPage() {
         })));
         if (linkResult.error) throw linkResult.error;
       }
-      await loadProperties(); setEditing(false); setMessage("Imóvel salvo com sucesso.");
+      await loadProperties(); closeEditor(); setMessage("Imóvel salvo com sucesso.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível salvar o imóvel.");
     } finally { setSaving(false); }
@@ -185,10 +236,10 @@ export function AdminPage() {
         </div>
       </section>
 
-      {editing && <div className="modal-backdrop" role="presentation"><div className="property-modal" role="dialog" aria-modal="true" aria-label={form.id ? "Editar imóvel" : "Novo imóvel"}><header><div><span className="section-label">Cadastro de imóvel</span><h2>{form.id ? "Editar imóvel" : "Novo imóvel"}</h2></div><button onClick={() => setEditing(false)} aria-label="Fechar"><X /></button></header>
+      {editing && <div className="modal-backdrop" role="presentation"><div className="property-modal" role="dialog" aria-modal="true" aria-label={form.id ? "Editar imóvel" : "Novo imóvel"}><header><div><span className="section-label">Cadastro de imóvel</span><h2>{form.id ? "Editar imóvel" : "Novo imóvel"}</h2></div><button onClick={closeEditor} aria-label="Fechar"><X /></button></header>
         <form onSubmit={saveProperty}>
-          <div className="form-section"><h3>Informações principais</h3><label>Título do anúncio<input required value={form.titulo} onChange={(e) => update("titulo", e.target.value)} placeholder="Ex.: Apartamento Jardins Essence" /></label><label>Código do imóvel<input required inputMode="numeric" pattern="[0-9]+" value={form.codigo} onChange={(e) => update("codigo", e.target.value.replace(/\D/g, ""))} placeholder="Ex.: 1024" /></label><label>Tipo<select value={form.tipo} onChange={(e) => changePropertyType(e.target.value as PropertyType)}>{PROPERTY_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><small className="field-helper">As especificações abaixo mudam conforme o tipo.</small></label><label>Preço (R$)<input required min="0" type="number" value={form.preco || ""} onChange={(e) => update("preco", Number(e.target.value))} /></label><label>Status<select value={form.status} onChange={(e) => update("status", e.target.value as PropertyFormData["status"])}><option value="disponivel">Disponível</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option><option value="inativo">Inativo</option></select></label></div>
-          <div className="form-section form-section--location"><h3>Localização</h3><label>CEP<input required inputMode="numeric" autoComplete="postal-code" value={form.cep} onChange={(e) => changeCep(e.target.value)} placeholder="00000-000" maxLength={9} />{cepStatus === "loading" && <small className="field-helper">Buscando endereço...</small>}{cepStatus === "success" && <small className="field-helper field-helper--success">Endereço preenchido. Confira e acrescente o número.</small>}{cepStatus === "error" && <small className="field-helper field-helper--error">CEP não encontrado. Preencha os campos manualmente.</small>}</label><label className="span-2">Endereço<input required autoComplete="street-address" value={form.endereco} onChange={(e) => update("endereco", e.target.value)} placeholder="Rua, avenida e número" /></label><label>Bairro<input required value={form.bairro} onChange={(e) => update("bairro", e.target.value)} /></label><label>Cidade<input required value={form.cidade} onChange={(e) => update("cidade", e.target.value)} /></label><label>UF<input required value={form.estado} onChange={(e) => update("estado", e.target.value.toUpperCase().slice(0, 2))} placeholder="MG" maxLength={2} /></label></div>
+          <div className="form-section form-section--main"><h3>Informações principais</h3><label className="main-field-half">Título do anúncio<input required value={form.titulo} onChange={(e) => update("titulo", e.target.value)} placeholder="Ex.: Apartamento Jardins Essence" /></label><label className="main-field-half">Código do imóvel<input required inputMode="numeric" pattern="[0-9]+" value={form.codigo} onChange={(e) => update("codigo", e.target.value.replace(/\D/g, ""))} placeholder="Ex.: 1024" /></label><label className="main-field-third">Tipo<select value={form.tipo} onChange={(e) => changePropertyType(e.target.value as PropertyType)}>{PROPERTY_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><small className="field-helper">Os campos abaixo mudam conforme o tipo.</small></label><label className="main-field-third">Preço<div className="currency-input"><span>R$</span><input required inputMode="numeric" value={formatCurrencyInteger(form.preco)} onChange={(e) => update("preco", parseCurrencyInteger(e.target.value))} placeholder="0" aria-label="Preço do imóvel em reais" /><span>,00</span></div></label><label className="main-field-third">Status<select value={form.status} onChange={(e) => update("status", e.target.value as PropertyFormData["status"])}><option value="disponivel">Disponível</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option><option value="inativo">Inativo</option></select></label></div>
+          <div className="form-section form-section--location"><h3>Localização</h3><label>CEP<input required inputMode="numeric" autoComplete="postal-code" value={form.cep} onChange={(e) => changeCep(e.target.value)} placeholder="00000-000" maxLength={9} />{cepStatus === "loading" && <small className="field-helper">Buscando endereço...</small>}{cepStatus === "success" && <small className="field-helper field-helper--success">Endereço preenchido. Confira os dados e informe o número.</small>}{cepStatus === "error" && <small className="field-helper field-helper--error">CEP não encontrado. Preencha os campos manualmente.</small>}</label><label className="span-2">Endereço<input required autoComplete="street-address" value={form.endereco} onChange={(e) => update("endereco", e.target.value)} placeholder="Rua ou avenida" /></label><label>Bairro<input required value={form.bairro} onChange={(e) => update("bairro", e.target.value)} /></label><label>Cidade<input required value={form.cidade} onChange={(e) => update("cidade", e.target.value)} /></label><label>UF<input required value={form.estado} onChange={(e) => update("estado", e.target.value.toUpperCase().slice(0, 2))} placeholder="MG" maxLength={2} /></label><label>Número<input required value={form.numero} onChange={(e) => update("numero", e.target.value)} placeholder="Ex.: 120" /></label><label className="span-2">Complemento<input value={form.complemento} onChange={(e) => update("complemento", e.target.value)} placeholder="Apartamento, bloco, sala ou ponto de referência" /></label></div>
           <div className="form-section form-section--specs"><h3>Especificações</h3><p className="form-section-intro">Preencha somente as informações disponíveis para este imóvel.</p>{specificationDefinitions.map((definition) => {
             const value = form.especificacoes[definition.key];
             const label = `${definition.label}${definition.unit ? ` (${definition.unit})` : ""}${definition.optional ? " · opcional" : ""}`;
@@ -200,9 +251,9 @@ export function AdminPage() {
             const checked = form.caracteristicas.includes(item.id);
             return <label key={item.id} className={`characteristic-option ${checked ? "is-checked" : ""}`}><input type="checkbox" checked={checked} onChange={() => toggleCharacteristic(item.id)} /><span className="characteristic-check"><Check /></span><span>{item.nome}</span></label>;
           })}</div></fieldset>)}</div>
-          <div className="form-section"><h3>Apresentação</h3><label className="span-2">Descrição<textarea required rows={5} value={form.descricao} onChange={(e) => update("descricao", e.target.value)} /></label><label className="span-2 upload-field"><span><ImagePlus /> Adicionar fotos</span><input type="file" accept="image/*" multiple onChange={(e) => setFiles(Array.from(e.target.files ?? []))} /><small>{files.length ? `${files.length} foto(s) selecionada(s)` : "PNG, JPG ou WebP · múltiplos arquivos"}</small></label><label className="span-2 switch-row"><input type="checkbox" checked={form.destaque} onChange={(e) => update("destaque", e.target.checked)} /><span><b>Exibir na página inicial</b><small>Marcar como imóvel em destaque</small></span></label></div>
+          <div className="form-section"><h3>Apresentação</h3><label className="span-2">Descrição<textarea required rows={5} value={form.descricao} onChange={(e) => update("descricao", e.target.value)} /></label><label className="span-2 upload-field"><span><ImagePlus /> Adicionar fotos</span><input type="file" accept="image/*" multiple onChange={(e) => { addPhotos(e.currentTarget.files); e.currentTarget.value = ""; }} /><small>{selectedPhotos.length ? `${selectedPhotos.length} nova(s) foto(s) pronta(s) para enviar` : "Adicione uma ou várias fotos por vez · PNG, JPG ou WebP"}</small></label>{((form.imagens?.length ?? 0) > 0 || selectedPhotos.length > 0) && <div className="span-2 photo-preview-grid">{form.imagens?.map((image, index) => <div className="photo-preview" key={image}><img src={image} alt={`Foto cadastrada ${index + 1}`} /><span>Cadastrada</span><button type="button" onClick={() => removeStoredPhoto(image)} aria-label={`Remover foto cadastrada ${index + 1}`}><X /></button></div>)}{selectedPhotos.map((photo, index) => <div className="photo-preview photo-preview--new" key={photo.id}><img src={photo.previewUrl} alt={`Nova foto ${index + 1}`} /><span>Nova</span><button type="button" onClick={() => removeSelectedPhoto(photo.id)} aria-label={`Remover nova foto ${index + 1}`}><X /></button></div>)}</div>}<label className="span-2 switch-row"><input type="checkbox" checked={form.destaque} onChange={(e) => update("destaque", e.target.checked)} /><span><b>Exibir na página inicial</b><small>Marcar como imóvel em destaque</small></span></label></div>
           {message && <div className="form-message">{message}</div>}
-          <footer><button type="button" className="button button--outline-dark" onClick={() => setEditing(false)}>Cancelar</button><button className="button button--gold" disabled={saving}><Save size={17} /> {saving ? "Salvando..." : "Salvar imóvel"}</button></footer>
+          <footer><button type="button" className="button button--outline-dark" onClick={closeEditor}>Cancelar</button><button className="button button--gold" disabled={saving}><Save size={17} /> {saving ? "Salvando..." : "Salvar imóvel"}</button></footer>
         </form>
       </div></div>}
     </main>

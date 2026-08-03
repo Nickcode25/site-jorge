@@ -9,6 +9,8 @@ create table if not exists public.imoveis (
   preco numeric(14, 2) not null check (preco >= 0),
   cep text not null default '',
   endereco text not null,
+  numero text not null default '',
+  complemento text not null default '',
   bairro text not null,
   cidade text not null,
   estado text not null default '',

@@ -35,7 +35,7 @@ export function PropertyDetailsPage() {
         <article>
           <span className="property-type property-type--static">{propertyTypeLabel(property.tipo)}{property.codigo ? ` · Cód. ${property.codigo}` : ""}</span>
           <h1>{property.titulo}</h1>
-          <div className="detail-address"><MapPin size={18} /> {property.endereco}, {property.bairro} · {property.cidade}{property.estado ? `/${property.estado}` : ""}</div>
+          <div className="detail-address"><MapPin size={18} /> {property.endereco}{property.numero ? `, ${property.numero}` : ""}{property.complemento ? ` — ${property.complemento}` : ""}, {property.bairro} · {property.cidade}{property.estado ? `/${property.estado}` : ""}</div>
           {specifications.length > 0 && <div className="detail-specs">{specifications.map((item) => <div key={item.key}><Maximize2 /><strong>{item.value}</strong><span>{item.label}</span></div>)}</div>}
           <div className="detail-description"><span className="section-label">Sobre o imóvel</span><h2>Um lugar pensado<br />para viver bem.</h2><p>{property.descricao}</p><p>Entre em contato para receber a ficha completa, consultar disponibilidade e agendar uma visita personalizada.</p></div>
           {property.caracteristicas.length > 0 && <div className="detail-characteristics"><span className="section-label">Características</span><h2>O que este imóvel oferece</h2><ul>{property.caracteristicas.map((item) => <li key={item.id}><Check /> {item.nome}</li>)}</ul></div>}

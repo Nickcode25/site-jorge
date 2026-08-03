@@ -193,6 +193,8 @@ export function normalizePropertyRow(row: Record<string, unknown>): Property {
   }).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
   return {
     ...(row as unknown as Property),
+    numero: (row.numero as string) ?? "",
+    complemento: (row.complemento as string) ?? "",
     status: (row.status as Property["status"]) ?? "disponivel",
     especificacoes: specifications,
     caracteristicas: characteristics,

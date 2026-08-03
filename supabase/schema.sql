@@ -1,4 +1,4 @@
--- Jorge Soares Imóveis — estrutura inicial do Supabase
+-- JLS Negócios Imobiliários — estrutura inicial do Supabase
 -- Execute este arquivo no SQL Editor de um projeto novo.
 
 create table if not exists public.imoveis (

@@ -43,7 +43,7 @@ export function PropertyDetailsPage() {
         </article>
         <aside className="contact-card">
           <span>Valor do imóvel</span><strong>{formatPrice(property.preco)}</strong><small>Condições sujeitas a confirmação</small>
-          <div className="contact-agent"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=86" alt="Jorge Soares" /><div><b>Jorge Soares</b><span>CRECI PJ: 8467</span></div></div>
+          <div className="contact-agent"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=86" alt="JLS Negócios Imobiliários" /><div><b>JLS Negócios Imobiliários</b><span>CRECI PJ: 8467</span></div></div>
           <a className="button button--whatsapp" href={whatsappUrl(`Olá Jorge, tenho interesse no imóvel ${property.titulo}.`)} target="_blank" rel="noreferrer"><MessageCircle size={19} /> Conversar no WhatsApp</a>
           <p>Atendimento pessoal, sem compromisso.</p>
         </aside>

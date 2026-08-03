@@ -1,4 +1,4 @@
-# Jorge Soares Imóveis
+# JLS Negócios Imobiliários
 
 Site institucional e catálogo imobiliário responsivo, com área pública e painel administrativo conectado ao Supabase.
 
@@ -18,4 +18,4 @@ Site institucional e catálogo imobiliário responsivo, com área pública e pai
 - `/admin/login` — autenticação por e-mail e senha
 - `/admin` — CRUD, fotos e controle de destaques
 
-Antes da publicação definitiva, substitua retrato e domínio pelos dados reais de Jorge Soares.
+Antes da publicação definitiva, substitua retrato e domínio pelos dados reais da JLS Negócios Imobiliários.

@@ -80,7 +80,7 @@ export function AdminPage() {
       <aside className="admin-sidebar">
         <div className="brand"><span className="brand-main">JORGE</span><span className="brand-accent">SOARES</span><span className="brand-tag">GESTÃO</span></div>
         <nav><button className="active"><LayoutDashboard /> Visão geral</button><button><Building2 /> Imóveis</button></nav>
-        <div className="admin-user"><span>{user.email?.slice(0, 1).toUpperCase()}</span><div><strong>Jorge Soares</strong><small>{user.email}</small></div></div>
+        <div className="admin-user"><span>{user.email?.slice(0, 1).toUpperCase()}</span><div><strong>JLS Negócios Imobiliários</strong><small>{user.email}</small></div></div>
         <button className="logout" onClick={() => supabase!.auth.signOut()}><LogOut /> Sair</button>
       </aside>
       <section className="admin-main">

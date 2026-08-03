@@ -9,10 +9,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const origin = `${protocol}://${host}`;
   return {
     metadataBase: new URL(origin),
-    title: { default: "Jorge Soares | Corretor de Imóveis", template: "%s | Jorge Soares Imóveis" },
+    title: { default: "JLS Negócios Imobiliários | Imóveis em Viçosa", template: "%s | JLS Negócios Imobiliários" },
     description: "Curadoria de apartamentos, casas e lotes em Viçosa e região. Atendimento próximo e negociação transparente.",
-    openGraph: { title: "Jorge Soares | Curadoria Imobiliária", description: "Seu próximo capítulo começa no lugar certo.", type: "website", locale: "pt_BR", images: [{ url: `${origin}/og.png`, width: 1200, height: 630, alt: "Jorge Soares — Curadoria Imobiliária" }] },
-    twitter: { card: "summary_large_image", title: "Jorge Soares | Curadoria Imobiliária", description: "Seu próximo capítulo começa no lugar certo.", images: [`${origin}/og.png`] },
+    openGraph: { title: "JLS Negócios Imobiliários | Curadoria Imobiliária", description: "Seu próximo capítulo começa no lugar certo.", type: "website", locale: "pt_BR", images: [{ url: `${origin}/og.png`, width: 1672, height: 941, alt: "JLS Negócios Imobiliários — Curadoria Imobiliária" }] },
+    twitter: { card: "summary_large_image", title: "JLS Negócios Imobiliários | Curadoria Imobiliária", description: "Seu próximo capítulo começa no lugar certo.", images: [`${origin}/og.png`] },
   };
 }
 

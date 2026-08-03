@@ -34,8 +34,8 @@ export function HomePage() {
         <div className="site-container">
           <div className="profile-strip">
             <div className="profile-intro">
-              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=88" alt="Retrato de Jorge Soares" />
-              <div><span>Seu corretor</span><h2>Jorge Soares</h2><p>Especialista em imóveis em Viçosa e região · CRECI PJ: 8467</p></div>
+              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=88" alt="Retrato da JLS Negócios Imobiliários" />
+              <div><span>Seu corretor</span><h2>JLS Negócios Imobiliários</h2><p>Especialista em imóveis em Viçosa e região · CRECI PJ: 8467</p></div>
             </div>
             <p className="profile-quote">“O imóvel certo não é apenas uma escolha financeira. É o cenário da vida que você quer viver.”</p>
           </div>
@@ -61,11 +61,11 @@ export function HomePage() {
       <section className="about-section section-light" id="sobre">
         <div className="site-container about-grid">
           <div className="about-visual">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=90" alt="Jorge Soares, corretor de imóveis" />
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=90" alt="JLS Negócios Imobiliários" />
             <div className="experience-stamp"><strong>12</strong><span>anos conectando<br />pessoas e lugares</span></div>
           </div>
           <div className="about-copy">
-            <span className="section-label">Sobre Jorge Soares</span>
+            <span className="section-label">Sobre JLS Negócios Imobiliários</span>
             <h2>Uma escolha importante pede uma conversa <em>honesta.</em></h2>
             <p>Meu trabalho começa antes da visita e não termina na entrega das chaves. Busco entender o que realmente importa para você, seleciono as oportunidades certas e conduzo cada negociação com transparência.</p>
             <p>Atuo com apartamentos, casas e terrenos em Viçosa e região, unindo conhecimento de mercado a um atendimento próximo, atento e sem pressa.</p>
@@ -91,7 +91,7 @@ export function HomePage() {
           <div className="whatsapp-card">
             <div className="whatsapp-card-icon"><MessageCircle /></div>
             <span className="whatsapp-card-label">Atendimento pelo WhatsApp</span>
-            <h3>Fale diretamente<br />com Jorge Soares.</h3>
+            <h3>Fale diretamente<br />com a JLS Negócios Imobiliários.</h3>
             <p>Conte o que procura e receba um atendimento pessoal, claro e sem compromisso.</p>
             <div className="whatsapp-benefits">
               <span><CheckCircle2 /> Resposta pessoal</span>

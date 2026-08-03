@@ -23,7 +23,7 @@ export function Footer() {
         </div>
       </div>
       <div className="site-container footer-bottom">
-        <span>© {new Date().getFullYear()} Jorge Soares Imóveis</span><span>CRECI PJ: 8467 · Todos os direitos reservados</span>
+        <span>© {new Date().getFullYear()} JLS Negócios Imobiliários</span><span>CRECI PJ: 8467 · Todos os direitos reservados</span>
       </div>
     </footer>
   );

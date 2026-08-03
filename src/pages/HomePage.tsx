@@ -22,7 +22,7 @@ export function HomePage() {
           <p>Imóveis escolhidos a dedo. Uma experiência guiada com transparência, segurança e confiança em cada etapa.</p>
           <div className="hero-actions">
             <Link className="button button--gold" to="/imoveis">Explorar imóveis <ArrowRight size={18} /></Link>
-            <a className="button button--glass" href={whatsappUrl("Olá Jorge! Gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Falar com Jorge</a>
+            <a className="button button--glass" href={whatsappUrl("Olá, equipe JLS! Gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Falar com JLS</a>
           </div>
         </div>
         <a className="scroll-cue" href="#encontre"><span>DESCUBRA</span><ArrowDownRight size={21} /></a>
@@ -34,13 +34,13 @@ export function HomePage() {
           <div className="profile-strip">
             <div className="profile-intro">
               <img className="profile-symbol" src="/brand/jls-symbol.png" alt="Símbolo da JLS Negócios Imobiliários" />
-              <div><span>Seu corretor</span><h2>JLS Negócios Imobiliários</h2><p>Especialista em imóveis em Viçosa e região · CRECI PJ: 8467</p></div>
+              <div><span>A sua imobiliária</span><h2>JLS Negócios Imobiliários</h2><p>Especialista em imóveis em Viçosa e região · CRECI PJ: 8467</p></div>
             </div>
             <p className="profile-quote">“O imóvel certo não é apenas uma escolha financeira. É o cenário da vida que você quer viver.”</p>
           </div>
           <div className="section-heading split-heading">
-            <div><span className="section-label">Encontre do seu jeito</span><h2>Que tipo de imóvel<br />você procura?</h2></div>
-            <p>Comece pela categoria que combina com o seu momento. Eu cuido dos detalhes a partir daqui.</p>
+            <div><span className="section-label">Encontre o imóvel perfeito para você</span><h2>Que tipo de imóvel<br />você procura?</h2></div>
+            <p>Comece pela categoria que combina com o seu momento. Nós cuidamos dos detalhes a partir daqui.</p>
           </div>
           <PropertyTypeButtons />
         </div>
@@ -49,7 +49,7 @@ export function HomePage() {
       <section className="featured-section">
         <div className="site-container">
           <div className="section-heading featured-heading">
-            <div><span className="section-label section-label--gold">Seleção do corretor</span><h2>Imóveis em <em>destaque</em></h2></div>
+            <div><span className="section-label section-label--gold">Seleção da imobiliária</span><h2>Imóveis em <em>destaque</em></h2></div>
               <p>Uma seleção de oportunidades que unem localização, arquitetura e valor.</p>
           </div>
           {loading ? <PageLoader /> : <div className="property-grid property-grid--featured">{properties.map((property) => <PropertyCard key={property.id} property={property} compact />)}</div>}
@@ -67,8 +67,8 @@ export function HomePage() {
           <div className="about-copy">
             <span className="section-label">Sobre JLS Negócios Imobiliários</span>
             <h2>Uma escolha importante pede uma conversa <em>honesta.</em></h2>
-            <p>Meu trabalho começa antes da visita e não termina na entrega das chaves. Busco entender o que realmente importa para você, seleciono as oportunidades certas e conduzo cada negociação com transparência.</p>
-            <p>Atuo com apartamentos, casas e terrenos em Viçosa e região, unindo conhecimento de mercado a um atendimento próximo, atento e sem pressa.</p>
+            <p>Nosso trabalho começa antes da visita e vai muito além da entrega das chaves. Buscamos entender o que realmente importa para você para selecionar as oportunidades certas e conduzir cada negociação com absoluta transparência.</p>
+            <p>Oferecemos soluções imobiliárias completas em Viçosa e região. Seja para morar, empreender ou investir, conectamos você aos mais diversos tipos de imóveis, unindo inteligência de mercado a um atendimento próximo, dedicado e no seu tempo.</p>
             <div className="about-values">
               <span><ShieldCheck /> Segurança em cada etapa</span>
               <span><Award /> Curadoria especializada</span>

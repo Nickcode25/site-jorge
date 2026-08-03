@@ -61,14 +61,7 @@ export function HomePage() {
       <section className="about-section section-light" id="sobre">
         <div className="site-container about-grid">
           <div className="about-visual">
-            <div className="about-brand-card">
-              <img src="/brand/logo-jls.png" alt="JLS Negócios Imobiliários" />
-              <div className="about-brand-details">
-                <div className="about-experience"><strong>12</strong><span>anos conectando<br />pessoas e lugares</span></div>
-                <div><small>Atuação</small><strong>Viçosa e região</strong></div>
-                <div><small>Registro</small><strong>CRECI PJ: 8467</strong></div>
-              </div>
-            </div>
+            <img className="about-brand-logo-only" src="/brand/about-jls-logo.png" alt="Logo da JLS Negócios Imobiliários" />
           </div>
           <div className="about-copy">
             <span className="section-label">Sobre JLS Negócios Imobiliários</span>

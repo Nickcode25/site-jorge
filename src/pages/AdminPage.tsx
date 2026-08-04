@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, Check, Edit3, Eye, ImagePlus, LayoutDashboard, LogOut, Plus, Save, Star, Trash2, X } from "lucide-react";
+import { Building2, Check, Edit3, Eye, ImagePlus, LayoutDashboard, LogOut, Plus, Save, Search, Star, Trash2, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { formatPrice } from "@/src/components/PropertyCard";
@@ -43,6 +43,10 @@ function parseCurrencyInput(value: string) {
   return digits ? Number(digits) / 100 : 0;
 }
 
+function normalizeSearch(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
 export function AdminPage() {
   const { user, loading } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
@@ -52,6 +56,7 @@ export function AdminPage() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [characteristicSearch, setCharacteristicSearch] = useState("");
   const [cepStatus, setCepStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const cepLookupId = useRef(0);
 
@@ -73,6 +78,7 @@ export function AdminPage() {
 
   const specificationDefinitions = SPECIFICATIONS_BY_TYPE[form.tipo];
   const availableCharacteristics = applicableCharacteristics(form.tipo, characteristics);
+  const normalizedCharacteristicSearch = normalizeSearch(characteristicSearch);
   const characteristicGroups = ([
     ["interna", "Internas"],
     ["externa", "Externas"],
@@ -80,8 +86,11 @@ export function AdminPage() {
   ] as const).map(([category, label]) => ({
     category,
     label,
-    items: availableCharacteristics.filter((item) => item.categoria === category),
+    items: availableCharacteristics
+      .filter((item) => item.categoria === category && (!normalizedCharacteristicSearch || normalizeSearch(item.nome).includes(normalizedCharacteristicSearch)))
+      .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" })),
   })).filter((group) => group.items.length > 0);
+  const visibleCharacteristicCount = characteristicGroups.reduce((total, group) => total + group.items.length, 0);
 
   function clearSelectedPhotos() {
     setSelectedPhotos((current) => {
@@ -90,14 +99,15 @@ export function AdminPage() {
     });
   }
 
-  function closeEditor() { clearSelectedPhotos(); setEditing(false); }
-  function openCreate() { clearSelectedPhotos(); setForm(emptyForm); setMessage(null); setCepStatus("idle"); setEditing(true); }
-  function openEdit(property: Property) { clearSelectedPhotos(); setForm({ ...emptyForm, ...property, codigo: property.codigo ?? "", cep: formatCep(property.cep ?? ""), estado: property.estado ?? "", numero: property.numero ?? "", complemento: property.complemento ?? "", especificacoes: property.especificacoes ?? {}, caracteristicas: property.caracteristicas.map((item) => item.id) }); setMessage(null); setCepStatus("idle"); setEditing(true); }
+  function closeEditor() { clearSelectedPhotos(); setCharacteristicSearch(""); setEditing(false); }
+  function openCreate() { clearSelectedPhotos(); setCharacteristicSearch(""); setForm(emptyForm); setMessage(null); setCepStatus("idle"); setEditing(true); }
+  function openEdit(property: Property) { clearSelectedPhotos(); setCharacteristicSearch(""); setForm({ ...emptyForm, ...property, codigo: property.codigo ?? "", cep: formatCep(property.cep ?? ""), estado: property.estado ?? "", numero: property.numero ?? "", complemento: property.complemento ?? "", especificacoes: property.especificacoes ?? {}, caracteristicas: property.caracteristicas.map((item) => item.id) }); setMessage(null); setCepStatus("idle"); setEditing(true); }
   function update<K extends keyof PropertyFormData>(key: K, value: PropertyFormData[K]) { setForm((current) => ({ ...current, [key]: value })); }
 
   function changePropertyType(type: PropertyType) {
     const hasDynamicData = Object.keys(form.especificacoes).length > 0 || form.caracteristicas.length > 0;
     if (hasDynamicData && !confirm("Ao alterar o tipo, as especificações e características já preenchidas serão limpas. Deseja continuar?")) return;
+    setCharacteristicSearch("");
     setForm((current) => ({ ...current, tipo: type, especificacoes: {}, caracteristicas: [] }));
   }
 
@@ -252,10 +262,10 @@ export function AdminPage() {
             if (definition.type === "boolean") return <label key={definition.key}>{label}<select value={typeof value === "boolean" ? String(value) : ""} onChange={(e) => updateSpecification(definition.key, e.target.value === "" ? "" : e.target.value === "true")}><option value="">Não informado</option><option value="true">Sim</option><option value="false">Não</option></select></label>;
             return <label key={definition.key}>{label}<input min="0" step={definition.step ?? "1"} type="number" value={typeof value === "number" ? value : ""} onChange={(e) => updateSpecification(definition.key, e.target.value === "" ? "" : Number(e.target.value))} /></label>;
           })}</div>
-          <div className="form-section form-section--characteristics"><h3>Características</h3><p className="form-section-intro">Marque somente os itens presentes no imóvel. A lista já está filtrada para {propertyTypeLabel(form.tipo).toLowerCase()}.</p>{characteristicGroups.map((group) => <fieldset key={group.category} className="characteristic-group"><legend>{group.label}</legend><div className="characteristic-options">{group.items.map((item) => {
+          <div className="form-section form-section--characteristics"><h3>Características</h3><p className="form-section-intro">Marque somente os itens presentes no imóvel. A lista já está filtrada para {propertyTypeLabel(form.tipo).toLowerCase()}.</p>{availableCharacteristics.length > 15 && <label className="characteristic-search"><span><Search /> Buscar característica</span><input type="search" value={characteristicSearch} onChange={(e) => setCharacteristicSearch(e.target.value)} placeholder="Ex.: varanda, piscina ou financiamento" /></label>}{characteristicGroups.map((group) => <fieldset key={group.category} className="characteristic-group"><legend>{group.label}</legend><div className="characteristic-options">{group.items.map((item) => {
             const checked = form.caracteristicas.includes(item.id);
             return <label key={item.id} className={`characteristic-option ${checked ? "is-checked" : ""}`}><input type="checkbox" checked={checked} onChange={() => toggleCharacteristic(item.id)} /><span className="characteristic-check"><Check /></span><span>{item.nome}</span></label>;
-          })}</div></fieldset>)}</div>
+          })}</div></fieldset>)}{normalizedCharacteristicSearch && visibleCharacteristicCount === 0 && <p className="characteristic-empty">Nenhuma característica encontrada para esta busca.</p>}</div>
           <div className="form-section"><h3>Apresentação</h3><label className="span-2">Descrição<textarea required rows={5} value={form.descricao} onChange={(e) => update("descricao", e.target.value)} /></label><label className="span-2 upload-field"><span><ImagePlus /> Adicionar fotos</span><input type="file" accept="image/*" multiple onChange={(e) => { addPhotos(e.currentTarget.files); e.currentTarget.value = ""; }} /><small>{selectedPhotos.length ? `${selectedPhotos.length} nova(s) foto(s) pronta(s) para enviar` : "Adicione uma ou várias fotos por vez · PNG, JPG ou WebP"}</small></label>{((form.imagens?.length ?? 0) > 0 || selectedPhotos.length > 0) && <div className="span-2 photo-preview-grid">{form.imagens?.map((image, index) => <div className="photo-preview" key={image}><img src={image} alt={`Foto cadastrada ${index + 1}`} /><span>Cadastrada</span><button type="button" onClick={() => removeStoredPhoto(image)} aria-label={`Remover foto cadastrada ${index + 1}`}><X /></button></div>)}{selectedPhotos.map((photo, index) => <div className="photo-preview photo-preview--new" key={photo.id}><img src={photo.previewUrl} alt={`Nova foto ${index + 1}`} /><span>Nova</span><button type="button" onClick={() => removeSelectedPhoto(photo.id)} aria-label={`Remover nova foto ${index + 1}`}><X /></button></div>)}</div>}<label className="span-2 switch-row"><input type="checkbox" checked={form.destaque} onChange={(e) => update("destaque", e.target.checked)} /><span><b>Exibir na página inicial</b><small>Marcar como imóvel em destaque</small></span></label></div>
           {message && <div className="form-message">{message}</div>}
           <footer><button type="button" className="button button--outline-dark" onClick={closeEditor}>Cancelar</button><button className="button button--gold" disabled={saving}><Save size={17} /> {saving ? "Salvando..." : "Salvar imóvel"}</button></footer>

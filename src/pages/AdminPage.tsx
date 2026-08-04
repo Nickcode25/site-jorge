@@ -130,10 +130,13 @@ export function AdminPage() {
   }
 
   function addPhotos(fileList: FileList | null) {
-    if (!fileList?.length) return;
+    // FileList is tied to the input and becomes empty as soon as the field is
+    // reset. Copy the files before scheduling the React state update.
+    const files = Array.from(fileList ?? []);
+    if (!files.length) return;
     setSelectedPhotos((current) => {
       const knownFiles = new Set(current.map((photo) => `${photo.file.name}-${photo.file.size}-${photo.file.lastModified}`));
-      const additions = Array.from(fileList).filter((file) => {
+      const additions = files.filter((file) => {
         const key = `${file.name}-${file.size}-${file.lastModified}`;
         if (!file.type.startsWith("image/") || knownFiles.has(key)) return false;
         knownFiles.add(key);

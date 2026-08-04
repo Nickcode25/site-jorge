@@ -1,6 +1,22 @@
 "use client";
 
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, MapPin, Maximize2, MessageCircle, Share2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUpDown,
+  Bath,
+  BedDouble,
+  Building2,
+  Car,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Maximize2,
+  MessageCircle,
+  Ruler,
+  Share2,
+  Sofa,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { formatPrice, PropertyCard } from "@/src/components/PropertyCard";
@@ -9,6 +25,27 @@ import { useProperties } from "@/src/hooks/useProperties";
 import { whatsappUrl } from "@/src/lib/contact";
 import { displaySpecifications } from "@/src/lib/property-config";
 import { propertyTypeLabel } from "@/src/types/property";
+
+const specificationIcons = {
+  mobilia: Sofa,
+  quartos: BedDouble,
+  banheiros: Bath,
+  banheiro: Bath,
+  vagas: Car,
+  vagas_totais: Car,
+  andar: Building2,
+  andares: Building2,
+  pavimentos: Building2,
+  elevadores_predio: ArrowUpDown,
+  elevadores: ArrowUpDown,
+} as const;
+
+function SpecificationIcon({ specificationKey }: { specificationKey: string }) {
+  const Icon = specificationIcons[specificationKey as keyof typeof specificationIcons]
+    ?? (specificationKey.includes("area") ? Ruler : Maximize2);
+
+  return <Icon aria-hidden="true" />;
+}
 
 export function PropertyDetailsPage() {
   const { id } = useParams();
@@ -36,13 +73,13 @@ export function PropertyDetailsPage() {
           <span className="property-type property-type--static">{propertyTypeLabel(property.tipo)}{property.codigo ? ` · Cód. ${property.codigo}` : ""}</span>
           <h1>{property.titulo}</h1>
           <div className="detail-address"><MapPin size={18} /> {property.endereco}{property.numero ? `, ${property.numero}` : ""}{property.complemento ? ` — ${property.complemento}` : ""}, {property.bairro} · {property.cidade}{property.estado ? `/${property.estado}` : ""}</div>
-          {specifications.length > 0 && <div className="detail-specs">{specifications.map((item) => <div key={item.key}><Maximize2 /><strong>{item.value}</strong><span>{item.label}</span></div>)}</div>}
+          {specifications.length > 0 && <div className="detail-specs">{specifications.map((item) => <div key={item.key}><SpecificationIcon specificationKey={item.key} /><strong>{item.value}</strong><span>{item.label}</span></div>)}</div>}
           <div className="detail-description"><span className="section-label">Sobre o imóvel</span><h2>Um lugar pensado<br />para viver bem.</h2><p>{property.descricao}</p><p>Entre em contato para receber a ficha completa, consultar disponibilidade e agendar uma visita personalizada.</p></div>
           {property.caracteristicas.length > 0 && <div className="detail-characteristics"><span className="section-label">Características</span><h2>O que este imóvel oferece</h2><ul>{property.caracteristicas.map((item) => <li key={item.id}><Check /> {item.nome}</li>)}</ul></div>}
         </article>
         <aside className="contact-card">
           <span>Valor do imóvel</span><strong>{formatPrice(property.preco)}</strong><small>Condições sujeitas a confirmação</small>
-          <div className="contact-agent"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=86" alt="JLS Negócios Imobiliários" /><div><b>JLS Negócios Imobiliários</b><span>CRECI PJ: 8467</span></div></div>
+          <div className="contact-agent"><img src="/brand/jls-symbol.png" alt="Símbolo da JLS Negócios Imobiliários" /><div><b>JLS Negócios Imobiliários</b><span>CRECI PJ: 8467</span></div></div>
           <a className="button button--whatsapp" href={whatsappUrl(`Olá Jorge, tenho interesse no imóvel ${property.titulo}.`)} target="_blank" rel="noreferrer"><MessageCircle size={19} /> Conversar no WhatsApp</a>
           <p>Atendimento pessoal, sem compromisso.</p>
         </aside>

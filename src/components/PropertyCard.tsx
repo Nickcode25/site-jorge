@@ -2,7 +2,12 @@ import { Bath, BedDouble, CarFront, MapPin, Maximize2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { propertyTypeLabel, type Property } from "@/src/types/property";
 
-export const formatPrice = (price: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(price);
+export const formatPrice = (price: number) => new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+}).format(price);
 
 export function PropertyCard({ property, compact = false }: { property: Property; compact?: boolean }) {
   return (

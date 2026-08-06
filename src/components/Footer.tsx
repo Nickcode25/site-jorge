@@ -1,4 +1,4 @@
-import { MapPin, MessageCircle } from "lucide-react";
+import { Instagram, MapPin, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { whatsappDisplay, whatsappUrl } from "@/src/lib/contact";
 
@@ -20,6 +20,7 @@ export function Footer() {
           <span className="footer-title">Contato</span>
           <a href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar.")} target="_blank" rel="noreferrer"><MessageCircle size={15} /> {whatsappDisplay}</a>
           <span><MapPin size={15} /> Viçosa e região</span>
+          <a href="https://www.instagram.com/jlsnegocios/" target="_blank" rel="noreferrer" aria-label="Instagram da JLS Negócios Imobiliários"><Instagram size={15} /> @jlsnegocios</a>
         </div>
       </div>
       <div className="site-container footer-bottom">

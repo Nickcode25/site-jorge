@@ -75,7 +75,7 @@ export function HomePage() {
               <span><Clock3 /> Disponibilidade real</span>
               <span><CheckCircle2 /> Negociação transparente</span>
             </div>
-            <a href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer" className="text-link">Vamos conversar <ArrowRight size={17} /></a>
+            <a href={whatsappUrl("Olá! Vim pelo seu site e gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer" className="text-link">Vamos conversar <ArrowRight size={17} /></a>
           </div>
         </div>
       </section>
@@ -98,7 +98,7 @@ export function HomePage() {
               <span><CheckCircle2 /> Informações dos imóveis</span>
               <span><CheckCircle2 /> Agendamento de visitas</span>
             </div>
-            <a className="button button--whatsapp whatsapp-card-button" href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer">Iniciar conversa <ArrowRight size={18} /></a>
+            <a className="button button--whatsapp whatsapp-card-button" href={whatsappUrl("Olá! Vim pelo seu site e gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer">Iniciar conversa <ArrowRight size={18} /></a>
             <small>{whatsappDisplay}</small>
           </div>
         </div>

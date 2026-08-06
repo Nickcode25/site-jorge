@@ -55,12 +55,15 @@ export interface Property {
   banheiros: number;
   vagas: number;
   imagens: string[];
+  videos: string[];
   destaque: boolean;
   criado_em: string;
+  atualizado_em?: string;
 }
 
-export type PropertyFormData = Omit<Property, "id" | "criado_em" | "imagens" | "caracteristicas"> & {
+export type PropertyFormData = Omit<Property, "id" | "criado_em" | "imagens" | "videos" | "caracteristicas"> & {
   id?: string;
   imagens?: string[];
+  videos?: string[];
   caracteristicas: string[];
 };

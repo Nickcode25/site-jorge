@@ -43,7 +43,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
   );

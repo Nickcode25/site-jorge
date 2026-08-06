@@ -10,9 +10,11 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  ImageOff,
   MapPin,
   Maximize2,
   MessageCircle,
+  Play,
   Ruler,
   Share2,
   Sofa,
@@ -50,23 +52,34 @@ function SpecificationIcon({ specificationKey }: { specificationKey: string }) {
 export function PropertyDetailsPage() {
   const { id } = useParams();
   const { properties, loading } = useProperties();
-  const [imageIndex, setImageIndex] = useState(0);
+  const [mediaIndex, setMediaIndex] = useState(0);
   const property = properties.find((item) => item.id === id);
   const related = useMemo(() => properties.filter((item) => item.id !== id && item.tipo === property?.tipo).slice(0, 3), [properties, id, property]);
 
   if (loading) return <main className="inner-page"><PageLoader /></main>;
   if (!property) return <main className="inner-page not-found"><span>404</span><h1>Imóvel não encontrado</h1><p>Este anúncio pode ter sido atualizado ou removido.</p><Link className="button button--gold" to="/imoveis">Voltar aos imóveis</Link></main>;
 
-  const images = property.imagens.length ? property.imagens : [""];
+  const media = [
+    ...property.imagens.map((url) => ({ type: "image" as const, url })),
+    ...property.videos.map((url) => ({ type: "video" as const, url })),
+  ];
+  const safeMediaIndex = media[mediaIndex] ? mediaIndex : 0;
+  const activeMedia = media[safeMediaIndex];
   const specifications = displaySpecifications(property);
-  const changeImage = (direction: number) => setImageIndex((current) => (current + direction + images.length) % images.length);
+  const changeMedia = (direction: number) => setMediaIndex((current) => (current + direction + media.length) % media.length);
 
   return (
     <main className="inner-page detail-page">
       <div className="site-container detail-topbar"><Link to="/imoveis"><ArrowLeft size={17} /> Voltar aos imóveis</Link><button onClick={() => navigator.share?.({ title: property.titulo, url: window.location.href })}><Share2 size={17} /> Compartilhar</button></div>
       <section className="gallery">
-        <div className="gallery-main"><img src={images[imageIndex]} alt={`${property.titulo} — foto ${imageIndex + 1}`} /><span>{imageIndex + 1} / {images.length}</span>{images.length > 1 && <><button className="gallery-prev" onClick={() => changeImage(-1)} aria-label="Foto anterior"><ChevronLeft /></button><button className="gallery-next" onClick={() => changeImage(1)} aria-label="Próxima foto"><ChevronRight /></button></>}</div>
-        <div className="gallery-thumbs">{images.slice(0, 4).map((image, index) => <button key={image} className={index === imageIndex ? "active" : ""} onClick={() => setImageIndex(index)}><img src={image} alt="" /></button>)}</div>
+        <div className="gallery-main">
+          {!activeMedia && <div className="gallery-empty"><ImageOff aria-hidden="true" /><span>Fotos e vídeos em breve</span></div>}
+          {activeMedia?.type === "image" && <img src={activeMedia.url} alt={`${property.titulo} — foto ${safeMediaIndex + 1}`} />}
+          {activeMedia?.type === "video" && <video key={activeMedia.url} src={activeMedia.url} controls playsInline preload="metadata" aria-label={`${property.titulo} — vídeo ${safeMediaIndex + 1}`} />}
+          {activeMedia && <span>{safeMediaIndex + 1} / {media.length}</span>}
+          {media.length > 1 && <><button className="gallery-prev" onClick={() => changeMedia(-1)} aria-label="Mídia anterior"><ChevronLeft /></button><button className="gallery-next" onClick={() => changeMedia(1)} aria-label="Próxima mídia"><ChevronRight /></button></>}
+        </div>
+        <div className="gallery-thumbs">{media.slice(0, 4).map((item, index) => <button key={`${item.type}-${item.url}`} className={`${index === safeMediaIndex ? "active" : ""} ${item.type === "video" ? "gallery-video-thumb" : ""}`} onClick={() => setMediaIndex(index)} aria-label={item.type === "video" ? `Exibir vídeo ${index + 1}` : `Exibir foto ${index + 1}`}>{item.type === "image" ? <img src={item.url} alt="" /> : <><video src={item.url} muted playsInline preload="metadata" aria-hidden="true" /><span><Play /></span></>}</button>)}</div>
       </section>
       <section className="site-container detail-layout">
         <article>

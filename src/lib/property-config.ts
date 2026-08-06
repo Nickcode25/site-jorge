@@ -307,6 +307,8 @@ export function normalizePropertyRow(row: Record<string, unknown>): Property {
     numero: (row.numero as string) ?? "",
     complemento: (row.complemento as string) ?? "",
     status: (row.status as Property["status"]) ?? "disponivel",
+    imagens: Array.isArray(row.imagens) ? row.imagens.filter((item): item is string => typeof item === "string" && Boolean(item)) : [],
+    videos: Array.isArray(row.videos) ? row.videos.filter((item): item is string => typeof item === "string" && Boolean(item)) : [],
     especificacoes: specifications,
     caracteristicas: characteristics,
   };

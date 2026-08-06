@@ -11,6 +11,10 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(origin),
     title: { default: "JLS Negócios Imobiliários | Imóveis em Viçosa", template: "%s | JLS Negócios Imobiliários" },
     description: "Curadoria de apartamentos, casas e lotes em Viçosa e região. Atendimento próximo e negociação transparente.",
+    icons: {
+      icon: [{ url: "/favicon-jls-transparent.png?v=3", type: "image/png", sizes: "512x512" }],
+      shortcut: "/favicon-jls-transparent.png?v=3",
+    },
     openGraph: { title: "JLS Negócios Imobiliários | Curadoria Imobiliária", description: "Seu próximo capítulo começa no lugar certo.", type: "website", locale: "pt_BR", images: [{ url: `${origin}/og.png`, width: 1672, height: 941, alt: "JLS Negócios Imobiliários — Curadoria Imobiliária" }] },
     twitter: { card: "summary_large_image", title: "JLS Negócios Imobiliários | Curadoria Imobiliária", description: "Seu próximo capítulo começa no lugar certo.", images: [`${origin}/og.png`] },
   };

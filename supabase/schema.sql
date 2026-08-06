@@ -23,8 +23,10 @@ create table if not exists public.imoveis (
   banheiros integer not null default 0 check (banheiros >= 0),
   vagas integer not null default 0 check (vagas >= 0),
   imagens text[] not null default '{}',
+  videos text[] not null default '{}',
   destaque boolean not null default false,
-  criado_em timestamptz not null default now()
+  criado_em timestamptz not null default now(),
+  atualizado_em timestamptz not null default now()
 );
 
 create table if not exists public.caracteristicas (
@@ -45,6 +47,21 @@ create index if not exists imoveis_destaque_criado_idx on public.imoveis (destaq
 create index if not exists imoveis_local_idx on public.imoveis (cidade, bairro);
 create unique index if not exists imoveis_codigo_unique_idx on public.imoveis (codigo) where codigo <> '';
 create index if not exists imovel_caracteristicas_caracteristica_idx on public.imovel_caracteristicas (caracteristica_id);
+
+create or replace function public.atualizar_data_imovel()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.atualizado_em = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists atualizar_data_imovel on public.imoveis;
+create trigger atualizar_data_imovel
+before update on public.imoveis
+for each row execute function public.atualizar_data_imovel();
 
 alter table public.imoveis enable row level security;
 
@@ -348,9 +365,9 @@ create trigger limitar_imoveis_em_destaque
 before insert or update of destaque on public.imoveis
 for each row execute function public.validar_limite_destaques();
 
--- Bucket público: as imagens são lidas no site, mas apenas o admin autenticado altera arquivos.
+-- Bucket público: fotos e vídeos são lidos no site, mas apenas o admin autenticado altera arquivos.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('imoveis', 'imoveis', true, 10485760, array['image/jpeg', 'image/png', 'image/webp'])
+values ('imoveis', 'imoveis', true, 52428800, array['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime'])
 on conflict (id) do update set
   public = excluded.public,
   file_size_limit = excluded.file_size_limit,

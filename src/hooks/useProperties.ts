@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { mockProperties } from "@/src/lib/mock-data";
 import { normalizePropertyRow } from "@/src/lib/property-config";
 import { isSupabaseConfigured, supabase } from "@/src/lib/supabase";
 import type { Property } from "@/src/types/property";
@@ -15,7 +14,8 @@ export function useProperties(featuredOnly = false) {
     setLoading(true);
     setError(null);
     if (!isSupabaseConfigured || !supabase) {
-      setProperties(featuredOnly ? mockProperties.filter((item) => item.destaque).slice(0, 3) : mockProperties);
+      setProperties([]);
+      setError("A conexão com o banco de dados não está configurada.");
       setLoading(false);
       return;
     }
@@ -32,5 +32,5 @@ export function useProperties(featuredOnly = false) {
     void load();
   }, [load]);
 
-  return { properties, loading, error, reload: load, demoMode: !isSupabaseConfigured };
+  return { properties, loading, error, reload: load };
 }

@@ -30,7 +30,7 @@ export function AdminLoginPage() {
       <div className="login-visual"><div className="login-overlay" /><Link to="/" className="login-brand-logo" aria-label="JLS Negócios Imobiliários — início"><img src="/brand/logo-jls.png" alt="JLS Negócios Imobiliários" /></Link><blockquote>“Organização nos bastidores para uma experiência impecável na frente.”</blockquote></div>
       <div className="login-panel"><div className="login-box"><span className="login-icon"><KeyRound /></span><span className="section-label">Área restrita</span><h1>Bem-vindo,<br />JLS.</h1><p>Acesse para gerenciar seus imóveis e destaques.</p>
         <form onSubmit={handleSubmit}><label>E-mail<div className="input-icon"><Mail /><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" /></div></label><label>Senha<div className="input-icon"><LockKeyhole /><input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" /></div></label>{message && <div className="form-message">{message}</div>}<button className="button button--gold" disabled={submitting}>{submitting ? "Entrando..." : "Entrar no painel"}<ArrowRight size={18} /></button></form>
-        {!isSupabaseConfigured && <div className="setup-note"><b>Modo de apresentação</b><span>As telas públicas usam dados demonstrativos. Configure o Supabase para ativar o painel.</span></div>}
+        {!isSupabaseConfigured && <div className="setup-note"><b>Banco de dados indisponível</b><span>Configure a conexão com o Supabase para acessar o painel.</span></div>}
         <Link to="/" className="back-link">← Voltar para o site</Link>
       </div></div>
     </main>

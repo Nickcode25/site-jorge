@@ -201,7 +201,6 @@ img { display: block; max-width: 100%; }
 .clear-button { height: 38px; display: flex; align-items: center; gap: 5px; border: 0; background: transparent; color: #8e624f; font-size: 10px; }
 .results-bar { min-height: 80px; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; }
 .results-bar strong { color: var(--ink); font: 400 23px var(--serif); }
-.demo-badge { padding: 7px 10px; background: var(--gold-soft); color: var(--gold); font-size: 8px; letter-spacing: .14em; text-transform: uppercase; }
 .empty-state { padding: 90px 20px; text-align: center; background: #fff; }
 .empty-state > span { color: var(--gold); font: 50px var(--serif); }
 .empty-state h2 { font: 34px var(--serif); margin: 5px; }

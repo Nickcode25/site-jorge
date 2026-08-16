@@ -1,6 +1,6 @@
 "use client";
 
-import { SlidersHorizontal, X } from "lucide-react";
+import { AlertTriangle, RefreshCw, SlidersHorizontal, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { PageLoader } from "@/src/components/PageLoader";
@@ -11,7 +11,7 @@ import { PROPERTY_TYPES } from "@/src/types/property";
 const perPage = 6;
 
 export function PropertiesPage() {
-  const { properties, loading, demoMode } = useProperties();
+  const { properties, loading, error, reload, demoMode } = useProperties();
   const [params, setParams] = useSearchParams();
   const type = params.get("tipo") ?? "";
   const [city, setCity] = useState("");
@@ -78,8 +78,8 @@ export function PropertiesPage() {
             <label>Valor máximo<select value={price} onChange={(e) => { setPrice(e.target.value); setVisible(perPage); }}><option value="">Sem limite</option><option value="100000">Até R$ 100 mil</option><option value="500000">Até R$ 500 mil</option><option value="1000000">Até R$ 1 mi</option></select></label>
             {(type || city || neighborhood || bedrooms || price) && <button className="clear-button" onClick={clearFilters}><X size={15} /> Limpar</button>}
           </div>
-          <div className="results-bar"><div><strong>{filtered.length}</strong> {filtered.length === 1 ? "imóvel encontrado" : "imóveis encontrados"}</div>{demoMode && <span className="demo-badge">Seleção demonstrativa</span>}</div>
-          {loading ? <PageLoader /> : filtered.length ? <>
+          <div className="results-bar"><div><strong>{loading || error ? "—" : filtered.length}</strong> {loading ? "carregando imóveis" : error ? "falha ao carregar" : filtered.length === 1 ? "imóvel encontrado" : "imóveis encontrados"}</div>{demoMode && <span className="demo-badge">Seleção demonstrativa</span>}</div>
+          {loading ? <PageLoader /> : error ? <div className="load-error-state"><AlertTriangle /><h2>Não foi possível carregar os imóveis</h2><p>{error} Verifique a conexão e tente novamente.</p><button type="button" onClick={() => { void reload(); }} className="button button--dark"><RefreshCw /> Tentar novamente</button></div> : filtered.length ? <>
             <div className="property-grid">{filtered.slice(0, visible).map((property) => <PropertyCard key={property.id} property={property} />)}</div>
             {visible < filtered.length && <div className="center-action"><button className="button button--dark" onClick={() => setVisible((count) => count + perPage)}>Carregar mais imóveis</button></div>}
           </> : <div className="empty-state"><span>—</span><h2>Nenhum imóvel encontrado</h2><p>Tente ampliar os filtros para descobrir outras oportunidades.</p><button onClick={clearFilters} className="button button--dark">Limpar filtros</button></div>}

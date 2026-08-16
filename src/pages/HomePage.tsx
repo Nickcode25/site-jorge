@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowRight, Award, CheckCircle2, Clock3, MessageCircle, ShieldCheck } from "lucide-react";
+import { AlertTriangle, ArrowDownRight, ArrowRight, Award, CheckCircle2, Clock3, MessageCircle, RefreshCw, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PageLoader } from "@/src/components/PageLoader";
 import { PropertyCard } from "@/src/components/PropertyCard";
@@ -7,7 +7,7 @@ import { useProperties } from "@/src/hooks/useProperties";
 import { whatsappDisplay, whatsappUrl } from "@/src/lib/contact";
 
 export function HomePage() {
-  const { properties, loading } = useProperties(true);
+  const { properties, loading, error, reload } = useProperties(true);
 
   return (
     <>
@@ -52,7 +52,7 @@ export function HomePage() {
             <div><span className="section-label section-label--gold">Seleção da imobiliária</span><h2>Imóveis em <em>destaque</em></h2></div>
               <p>Uma seleção de oportunidades que unem localização, arquitetura e valor.</p>
           </div>
-          {loading ? <PageLoader /> : <div className="property-grid property-grid--featured">{properties.map((property) => <PropertyCard key={property.id} property={property} compact />)}</div>}
+          {loading ? <PageLoader /> : error ? <div className="load-error-state load-error-state--dark"><AlertTriangle /><h2>Não foi possível carregar os destaques</h2><p>{error}</p><button type="button" onClick={() => { void reload(); }} className="button button--outline-light"><RefreshCw /> Tentar novamente</button></div> : <div className="property-grid property-grid--featured">{properties.map((property) => <PropertyCard key={property.id} property={property} compact />)}</div>}
           <div className="center-action"><Link to="/imoveis" className="button button--outline-light">Ver todos os imóveis <ArrowRight size={18} /></Link></div>
         </div>
       </section>

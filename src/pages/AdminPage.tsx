@@ -3,6 +3,7 @@
 import { Building2, Check, Edit3, Eye, ImageOff, ImagePlus, LayoutDashboard, LogOut, Play, Plus, Save, Search, SlidersHorizontal, Star, Trash2, Video, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { ConfirmDialog } from "@/src/components/ConfirmDialog";
 import { formatPrice } from "@/src/components/PropertyCard";
 import { AdminOverview, type AdminPropertyFilter } from "@/src/components/AdminOverview";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -27,6 +28,14 @@ interface SelectedVideo {
   id: string;
   file: File;
   previewUrl: string;
+}
+
+interface ConfirmationRequest {
+  title: string;
+  message: string;
+  confirmLabel: string;
+  tone?: "default" | "danger";
+  action: () => void | Promise<void>;
 }
 
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
@@ -105,6 +114,8 @@ export function AdminPage() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [confirmation, setConfirmation] = useState<ConfirmationRequest | null>(null);
+  const [confirming, setConfirming] = useState(false);
   const [adminType, setAdminType] = useState("");
   const [adminStatus, setAdminStatus] = useState("");
   const [adminCity, setAdminCity] = useState("");
@@ -180,6 +191,24 @@ export function AdminPage() {
     return true;
   });
 
+  function cancelConfirmation() {
+    if (!confirming) setConfirmation(null);
+  }
+
+  async function acceptConfirmation() {
+    if (!confirmation || confirming) return;
+    setConfirming(true);
+    try {
+      await confirmation.action();
+      setConfirmation(null);
+    } catch (error) {
+      setMessage(errorMessage(error));
+      setConfirmation(null);
+    } finally {
+      setConfirming(false);
+    }
+  }
+
   function clearSelectedPhotos() {
     setSelectedPhotos((current) => {
       current.forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
@@ -210,9 +239,17 @@ export function AdminPage() {
 
   function changePropertyType(type: PropertyType) {
     const hasDynamicData = Object.keys(form.especificacoes).length > 0 || form.caracteristicas.length > 0;
-    if (hasDynamicData && !confirm("Ao alterar o tipo, as especificações e características já preenchidas serão limpas. Deseja continuar?")) return;
-    setCharacteristicSearch("");
-    setForm((current) => ({ ...current, tipo: type, especificacoes: {}, caracteristicas: [] }));
+    const applyTypeChange = () => {
+      setCharacteristicSearch("");
+      setForm((current) => ({ ...current, tipo: type, especificacoes: {}, caracteristicas: [] }));
+    };
+    if (!hasDynamicData) { applyTypeChange(); return; }
+    setConfirmation({
+      title: "Alterar o tipo do imóvel?",
+      message: "As especificações e características já preenchidas serão removidas para adequar o formulário ao novo tipo.",
+      confirmLabel: "Alterar tipo",
+      action: applyTypeChange,
+    });
   }
 
   function updateSpecification(key: string, value: SpecificationValue | "") {
@@ -398,10 +435,18 @@ export function AdminPage() {
     } finally { setSaving(false); }
   }
 
-  async function deleteProperty(property: Property) {
-    if (!confirm(`Excluir “${property.titulo}”? Esta ação não pode ser desfeita.`)) return;
-    const { error } = await supabase!.from("imoveis").delete().eq("id", property.id);
-    if (error) setMessage(error.message); else { setMessage("Imóvel excluído."); await loadProperties(); }
+  function deleteProperty(property: Property) {
+    setConfirmation({
+      title: "Excluir este imóvel?",
+      message: `O imóvel “${property.titulo}” será removido permanentemente. Esta ação não pode ser desfeita.`,
+      confirmLabel: "Excluir imóvel",
+      tone: "danger",
+      action: async () => {
+        const { error } = await supabase!.from("imoveis").delete().eq("id", property.id);
+        if (error) setMessage(error.message);
+        else { setMessage("Imóvel excluído."); await loadProperties(); }
+      },
+    });
   }
 
   async function toggleFeatured(property: Property) {
@@ -488,6 +533,16 @@ export function AdminPage() {
           <footer><button type="button" className="button button--outline-dark" onClick={closeEditor}>Cancelar</button><button className="button button--gold" disabled={saving}><Save size={17} /> {saving ? "Salvando..." : "Salvar imóvel"}</button></footer>
         </form>
       </div></div>}
+      <ConfirmDialog
+        open={Boolean(confirmation)}
+        title={confirmation?.title ?? "Confirmar ação"}
+        message={confirmation?.message ?? ""}
+        confirmLabel={confirmation?.confirmLabel}
+        tone={confirmation?.tone}
+        loading={confirming}
+        onCancel={cancelConfirmation}
+        onConfirm={() => { void acceptConfirmation(); }}
+      />
     </main>
   );
 }

@@ -51,6 +51,7 @@ export default defineConfig(async () => {
 
     return {
       plugins: [vinext(), nitro({ preset: "vercel" })],
+      ssr: { noExternal: ["cookie"] },
     };
   }
 

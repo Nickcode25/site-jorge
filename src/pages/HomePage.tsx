@@ -22,7 +22,7 @@ export function HomePage() {
           <p>Imóveis escolhidos a dedo. Uma experiência guiada com transparência, segurança e confiança em cada etapa.</p>
           <div className="hero-actions">
             <Link className="button button--gold" to="/imoveis">Explorar imóveis <ArrowRight size={18} /></Link>
-            <a className="button button--glass" href={whatsappUrl("Olá, equipe JLS! Gostaria de conversar sobre um imóvel.")} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Falar com JLS</a>
+            <a className="button button--glass" href={whatsappUrl("Olá! Gostaria de conversar com um especialista sobre um imóvel.")} target="_blank" rel="noreferrer"><MessageCircle size={18} /> Falar com um especialista</a>
           </div>
         </div>
         <a className="scroll-cue" href="#encontre"><span>DESCUBRA</span><ArrowDownRight size={21} /></a>

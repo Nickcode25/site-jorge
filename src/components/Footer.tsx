@@ -21,6 +21,7 @@ export function Footer() {
           <a href={whatsappUrl("Olá Jorge! Vim pelo seu site e gostaria de conversar.")} target="_blank" rel="noreferrer"><MessageCircle size={15} /> {whatsappDisplay}</a>
           <span><MapPin size={15} /> Viçosa e região</span>
           <a href="https://www.instagram.com/jlsnegocios/" target="_blank" rel="noreferrer" aria-label="Instagram da JLS Negócios Imobiliários"><Instagram size={15} /> @jlsnegocios</a>
+          <a href="https://www.instagram.com/jorgesoaresimoveis/" target="_blank" rel="noreferrer" aria-label="Instagram do corretor Jorge Soares"><Instagram size={15} /> @jorgesoaresimoveis</a>
         </div>
       </div>
       <div className="site-container footer-bottom">

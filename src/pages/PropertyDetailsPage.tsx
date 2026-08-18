@@ -19,7 +19,7 @@ import {
   Share2,
   Sofa,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { formatPrice, PropertyCard } from "@/src/components/PropertyCard";
 import { PageLoader } from "@/src/components/PageLoader";
@@ -53,20 +53,32 @@ export function PropertyDetailsPage() {
   const { id } = useParams();
   const { properties, loading } = useProperties();
   const [mediaIndex, setMediaIndex] = useState(0);
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const property = properties.find((item) => item.id === id);
   const related = useMemo(() => properties.filter((item) => item.id !== id && item.tipo === property?.tipo).slice(0, 3), [properties, id, property]);
 
-  if (loading) return <main className="inner-page"><PageLoader /></main>;
-  if (!property) return <main className="inner-page not-found"><span>404</span><h1>Imóvel não encontrado</h1><p>Este anúncio pode ter sido atualizado ou removido.</p><Link className="button button--gold" to="/imoveis">Voltar aos imóveis</Link></main>;
+  const media = useMemo(() => {
+    if (!property) return [];
+    return [
+      ...property.imagens.map((url) => ({ type: "image" as const, url })),
+      ...property.videos.map((url) => ({ type: "video" as const, url })),
+    ];
+  }, [property]);
 
-  const media = [
-    ...property.imagens.map((url) => ({ type: "image" as const, url })),
-    ...property.videos.map((url) => ({ type: "video" as const, url })),
-  ];
   const safeMediaIndex = media[mediaIndex] ? mediaIndex : 0;
   const activeMedia = media[safeMediaIndex];
-  const specifications = displaySpecifications(property);
+  const specifications = property ? displaySpecifications(property) : [];
   const changeMedia = (direction: number) => setMediaIndex((current) => (current + direction + media.length) % media.length);
+
+  useEffect(() => {
+    const activeThumb = thumbnailRefs.current[safeMediaIndex];
+    if (activeThumb) {
+      activeThumb.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [safeMediaIndex]);
+
+  if (loading) return <main className="inner-page"><PageLoader /></main>;
+  if (!property) return <main className="inner-page not-found"><span>404</span><h1>Imóvel não encontrado</h1><p>Este anúncio pode ter sido atualizado ou removido.</p><Link className="button button--gold" to="/imoveis">Voltar aos imóveis</Link></main>;
 
   return (
     <main className="inner-page detail-page">
@@ -79,7 +91,28 @@ export function PropertyDetailsPage() {
           {activeMedia && <span>{safeMediaIndex + 1} / {media.length}</span>}
           {media.length > 1 && <><button className="gallery-prev" onClick={() => changeMedia(-1)} aria-label="Mídia anterior"><ChevronLeft /></button><button className="gallery-next" onClick={() => changeMedia(1)} aria-label="Próxima mídia"><ChevronRight /></button></>}
         </div>
-        <div className="gallery-thumbs">{media.slice(0, 4).map((item, index) => <button key={`${item.type}-${item.url}`} className={`${index === safeMediaIndex ? "active" : ""} ${item.type === "video" ? "gallery-video-thumb" : ""}`} onClick={() => setMediaIndex(index)} aria-label={item.type === "video" ? `Exibir vídeo ${index + 1}` : `Exibir foto ${index + 1}`}>{item.type === "image" ? <img src={item.url} alt="" /> : <><video src={item.url} muted playsInline preload="metadata" aria-hidden="true" /><span><Play /></span></>}</button>)}</div>
+        <div className="gallery-thumbs">
+          {media.map((item, index) => (
+            <button
+              key={`${item.type}-${item.url}`}
+              ref={(el) => {
+                thumbnailRefs.current[index] = el;
+              }}
+              className={`${index === safeMediaIndex ? "active" : ""} ${item.type === "video" ? "gallery-video-thumb" : ""}`}
+              onClick={() => setMediaIndex(index)}
+              aria-label={item.type === "video" ? `Exibir vídeo ${index + 1}` : `Exibir foto ${index + 1}`}
+            >
+              {item.type === "image" ? (
+                <img src={item.url} alt="" />
+              ) : (
+                <>
+                  <video src={item.url} muted playsInline preload="metadata" aria-hidden="true" />
+                  <span><Play /></span>
+                </>
+              )}
+            </button>
+          ))}
+        </div>
       </section>
       <section className="site-container detail-layout">
         <article>

@@ -495,6 +495,8 @@ img { display: block; max-width: 100%; }
   border-radius: 6px;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
 }
+.gallery-modal-media-wrapper--swipe { touch-action: pan-y pinch-zoom; }
+.gallery-modal-img { user-select: none; -webkit-user-select: none; }
 .gallery-modal-footer {
   height: 94px;
   display: flex;

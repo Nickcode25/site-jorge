@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { gallerySwipeStep } from "@/src/lib/gallery-swipe";
 
 export interface GalleryMediaItem {
   type: "image" | "video";
@@ -38,12 +39,14 @@ export function PropertyGalleryModal({
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const swipeRef = useRef<{ pointerId: number; x: number; y: number; index: number } | null>(null);
 
   // Update active index when initialIndex changes or modal opens
   useEffect(() => {
     if (isOpen) {
       setActiveIndex(initialIndex);
     }
+    swipeRef.current = null;
   }, [isOpen, initialIndex]);
 
   // Lock body scroll when modal is open
@@ -161,12 +164,31 @@ export function PropertyGalleryModal({
           </button>
         )}
 
-        <div className="gallery-modal-media-wrapper" onClick={(e) => e.stopPropagation()}>
+        <div
+          className={`gallery-modal-media-wrapper${currentMedia.type === "image" ? " gallery-modal-media-wrapper--swipe" : ""}`}
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(event) => {
+            if (!event.isPrimary) { swipeRef.current = null; return; }
+            if (event.pointerType !== "touch" || currentMedia.type !== "image" || media.length < 2) return;
+            swipeRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, index: activeIndex };
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerUp={(event) => {
+            const swipe = swipeRef.current;
+            swipeRef.current = null;
+            if (!swipe || swipe.pointerId !== event.pointerId || swipe.index !== activeIndex) return;
+            const step = gallerySwipeStep(event.clientX - swipe.x, event.clientY - swipe.y);
+            if (step) setActiveIndex((index) => (index + step + media.length) % media.length);
+          }}
+          onPointerCancel={() => { swipeRef.current = null; }}
+          onLostPointerCapture={() => { swipeRef.current = null; }}
+        >
           {currentMedia?.type === "image" ? (
             <img
               src={currentMedia.url}
               alt={`${propertyTitle} — foto ${activeIndex + 1}`}
               className="gallery-modal-img"
+              draggable={false}
             />
           ) : (
             <GalleryVideo key={currentMedia.url} url={currentMedia.url} />

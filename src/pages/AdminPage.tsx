@@ -16,6 +16,7 @@ import {
   normalizePropertyRow,
 } from "@/src/lib/property-config";
 import { supabase } from "@/src/lib/supabase";
+import { MAX_VIDEO_SIZE, propertyVideoContentType } from "@/src/lib/property-video";
 import { PROPERTY_TYPES, propertyTypeLabel, type CharacteristicDefinition, type Property, type PropertyFormData, type PropertyType, type SpecificationValue } from "@/src/types/property";
 
 interface SelectedPhoto {
@@ -38,8 +39,6 @@ interface ConfirmationRequest {
   action: () => void | Promise<void>;
 }
 
-const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
-const SUPPORTED_VIDEO_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime"]);
 
 const emptyForm: PropertyFormData = {
   codigo: "", titulo: "", tipo: "apartamento", preco: 0, cep: "", endereco: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "", status: "disponivel", descricao: "", especificacoes: {}, caracteristicas: [], area: 0,
@@ -302,14 +301,16 @@ export function AdminPage() {
   function addVideos(fileList: FileList | null) {
     const files = Array.from(fileList ?? []);
     if (!files.length) return;
-    const invalidType = files.some((file) => !SUPPORTED_VIDEO_TYPES.has(file.type));
+    const invalidType = files.some((file) => !propertyVideoContentType(file));
     const oversized = files.some((file) => file.size > MAX_VIDEO_SIZE);
-    const validFiles = files.filter((file) => SUPPORTED_VIDEO_TYPES.has(file.type) && file.size <= MAX_VIDEO_SIZE);
+    const validFiles = files.filter((file) => propertyVideoContentType(file) && file.size > 0 && file.size <= MAX_VIDEO_SIZE);
     if (invalidType || oversized) {
       setMessage(oversized
         ? "Cada vídeo deve ter no máximo 50 MB. Use MP4, WebM ou MOV."
         : "Formato de vídeo não compatível. Use MP4, WebM ou MOV.");
     }
+    else if (files.some((file) => file.size === 0)) setMessage("Um dos vídeos está vazio. Selecione o arquivo original novamente.");
+    else setMessage(null);
     setSelectedVideos((current) => {
       const knownFiles = new Set(current.map((video) => `${video.file.name}-${video.file.size}-${video.file.lastModified}`));
       const additions = validFiles.filter((file) => {
@@ -380,7 +381,7 @@ export function AdminPage() {
       const path = `videos/${crypto.randomUUID()}/${safeName}`;
       const { error } = await supabase!.storage.from("imoveis").upload(path, file, {
         cacheControl: "3600",
-        contentType: file.type,
+        contentType: propertyVideoContentType(file)!,
         upsert: false,
       });
       if (error) throw error;

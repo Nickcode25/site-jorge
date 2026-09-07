@@ -16,6 +16,17 @@ interface PropertyGalleryModalProps {
   propertyTitle: string;
 }
 
+function GalleryVideo({ url }: { url: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return (
+    <div className="gallery-video-error" role="status">
+      <p>Não foi possível reproduzir este vídeo no navegador.</p>
+      <a href={url} target="_blank" rel="noreferrer">Abrir o arquivo de vídeo</a>
+    </div>
+  );
+  return <video src={url} controls autoPlay playsInline className="gallery-modal-video" onError={() => setFailed(true)} />;
+}
+
 export function PropertyGalleryModal({
   isOpen,
   initialIndex = 0,
@@ -25,6 +36,8 @@ export function PropertyGalleryModal({
 }: PropertyGalleryModalProps) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   // Update active index when initialIndex changes or modal opens
   useEffect(() => {
@@ -38,10 +51,24 @@ export function PropertyGalleryModal({
     if (!isOpen) return;
 
     const originalOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const elements = Array.from(modalRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled), a[href], video[controls]") ?? []);
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener("keydown", trapFocus);
 
     return () => {
       document.body.style.overflow = originalOverflow;
+      document.removeEventListener("keydown", trapFocus);
+      previousFocus?.focus();
     };
   }, [isOpen]);
 
@@ -53,6 +80,8 @@ export function PropertyGalleryModal({
       if (e.key === "Escape") {
         e.preventDefault();
         onClose();
+      } else if (e.target instanceof HTMLVideoElement) {
+        return;
       } else if (e.key === "ArrowLeft") {
         e.preventDefault();
         setActiveIndex((prev) => (prev - 1 + media.length) % media.length);
@@ -95,11 +124,12 @@ export function PropertyGalleryModal({
 
   return (
     <div
+      ref={modalRef}
       className="gallery-modal-backdrop"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label={`Galeria de fotos — ${propertyTitle}`}
+      aria-label={`Fotos e vídeos — ${propertyTitle}`}
     >
       {/* Header bar with counter and close button */}
       <header className="gallery-modal-header" onClick={(e) => e.stopPropagation()}>
@@ -108,6 +138,7 @@ export function PropertyGalleryModal({
           {currentMedia?.type === "video" && <span className="gallery-modal-tag">Vídeo</span>}
         </div>
         <button
+          ref={closeRef}
           type="button"
           className="gallery-modal-close"
           onClick={onClose}
@@ -124,7 +155,7 @@ export function PropertyGalleryModal({
             type="button"
             className="gallery-modal-nav gallery-modal-nav--prev"
             onClick={handlePrev}
-            aria-label="Foto anterior"
+            aria-label="Mídia anterior"
           >
             <ChevronLeft size={28} />
           </button>
@@ -138,14 +169,7 @@ export function PropertyGalleryModal({
               className="gallery-modal-img"
             />
           ) : (
-            <video
-              key={currentMedia.url}
-              src={currentMedia.url}
-              controls
-              autoPlay
-              playsInline
-              className="gallery-modal-video"
-            />
+            <GalleryVideo key={currentMedia.url} url={currentMedia.url} />
           )}
         </div>
 
@@ -154,7 +178,7 @@ export function PropertyGalleryModal({
             type="button"
             className="gallery-modal-nav gallery-modal-nav--next"
             onClick={handleNext}
-            aria-label="Próxima foto"
+            aria-label="Próxima mídia"
           >
             <ChevronRight size={28} />
           </button>

@@ -8,8 +8,6 @@ import {
   Building2,
   Car,
   Check,
-  ChevronLeft,
-  ChevronRight,
   ImageOff,
   MapPin,
   Maximize2,
@@ -18,6 +16,7 @@ import {
   Ruler,
   Share2,
   Sofa,
+  Video,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -99,21 +98,34 @@ export function PropertyDetailsPage() {
         ) : (
           <div className={`gallery-mosaic ${media.length === 1 ? "gallery-mosaic--single" : ""}`}>
             {/* Main large photo (Left) */}
-            <button
-              type="button"
-              className="gallery-mosaic-tile gallery-mosaic-tile--main"
-              onClick={() => openGalleryAt(0)}
-              aria-label="Abrir foto principal na galeria"
-            >
-              {primaryMedia.type === "image" ? (
-                <img src={primaryMedia.url} alt={`${property.titulo} — foto principal`} />
-              ) : (
-                <div className="gallery-mosaic-video-wrap">
-                  <video src={primaryMedia.url} muted playsInline preload="metadata" />
-                  <span className="gallery-mosaic-play-badge"><Play size={22} /></span>
-                </div>
+            <div className="gallery-mosaic-main">
+              <button
+                type="button"
+                className="gallery-mosaic-tile gallery-mosaic-tile--main"
+                onClick={() => openGalleryAt(0)}
+                aria-label={primaryMedia.type === "video" ? "Abrir vídeo do imóvel" : "Abrir foto principal na galeria"}
+              >
+                {primaryMedia.type === "image" ? (
+                  <img src={primaryMedia.url} alt={`${property.titulo} — foto principal`} />
+                ) : (
+                  <div className="gallery-mosaic-video-wrap">
+                    <video src={primaryMedia.url} muted playsInline preload="metadata" />
+                    <span className="gallery-mosaic-play-badge"><Play size={22} /></span>
+                  </div>
+                )}
+              </button>
+              {property.videos.length > 0 && (
+                <button
+                  type="button"
+                  className="gallery-video-button"
+                  onClick={() => openGalleryAt(property.imagens.length)}
+                  aria-haspopup="dialog"
+                >
+                  <Video size={18} fill="currentColor" aria-hidden="true" />
+                  Assista a um vídeo do imóvel
+                </button>
               )}
-            </button>
+            </div>
 
             {/* Side 2x2 grid (Right) */}
             {sideMedia.length > 0 && (

@@ -1,0 +1,39 @@
+name: Supabase keep-alive
+
+on:
+  schedule:
+    # UTC: 00:23, 06:23, 12:23, 18:23 (Brasília: 21:23, 03:23, 09:23, 15:23).
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: supabase-keep-alive
+  cancel-in-progress: false
+
+jobs:
+  query-database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Consultar um imóvel sem alterar dados
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_KEEP_ALIVE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_KEEP_ALIVE_ANON_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${SUPABASE_URL:?Configure SUPABASE_KEEP_ALIVE_URL nos secrets do repositório}"
+          : "${SUPABASE_ANON_KEY:?Configure SUPABASE_KEEP_ALIVE_ANON_KEY nos secrets do repositório}"
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 10 --retry-max-time 180 \
+            --connect-timeout 10 --max-time 30 \
+            --header "apikey: ${SUPABASE_ANON_KEY}" \
+            --header 'Accept: application/json' \
+            --output "$response_file" \
+            "${SUPABASE_URL%/}/rest/v1/imoveis?select=id&limit=1"
+          jq -e 'type == "array"' "$response_file" > /dev/null
+          echo 'Consulta ao Supabase concluída com sucesso; nenhum dado foi alterado.'

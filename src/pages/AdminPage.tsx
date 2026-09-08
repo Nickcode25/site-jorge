@@ -153,11 +153,18 @@ export function AdminPage() {
   }, [user]);
   useEffect(() => {
     if (!user || !supabase) return;
-    const channel = supabase.channel("admin-imoveis-realtime")
+    const client = supabase;
+    const channel = client.channel("admin-imoveis-realtime")
       .on("postgres_changes", { event: "*", schema: "public", table: "imoveis" }, () => { void loadProperties(false); })
       .subscribe();
-    return () => { void supabase.removeChannel(channel); };
+    return () => { void client.removeChannel(channel); };
   }, [user]);
+  useEffect(() => {
+    if (!editing) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [editing]);
   if (loading) return <div className="admin-loading">Carregando painel...</div>;
   if (!user || !supabase) return <Navigate to="/admin/login" replace />;
 

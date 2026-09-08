@@ -20,16 +20,21 @@ export function AdminLoginPage() {
     event.preventDefault();
     if (!supabase) { setMessage("Conecte o Supabase no arquivo .env para habilitar o acesso seguro."); return; }
     setSubmitting(true); setMessage(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setSubmitting(false);
-    if (error) setMessage("E-mail ou senha incorretos."); else navigate("/admin");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setMessage("Não foi possível entrar. Confira os dados e sua conexão."); else navigate("/admin");
+    } catch {
+      setMessage("Não foi possível conectar. Verifique sua conexão e tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
     <main className="login-page">
       <div className="login-visual"><div className="login-overlay" /><Link to="/" className="login-brand-logo" aria-label="JLS Negócios Imobiliários — início"><img src="/brand/logo-jls.png" alt="JLS Negócios Imobiliários" /></Link><blockquote>“Organização nos bastidores para uma experiência impecável na frente.”</blockquote></div>
       <div className="login-panel"><div className="login-box"><span className="login-icon"><KeyRound /></span><span className="section-label">Área restrita</span><h1>Bem-vindo,<br />JLS.</h1><p>Acesse para gerenciar seus imóveis e destaques.</p>
-        <form onSubmit={handleSubmit}><label>E-mail<div className="input-icon"><Mail /><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" /></div></label><label>Senha<div className="input-icon"><LockKeyhole /><input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" /></div></label>{message && <div className="form-message">{message}</div>}<button className="button button--gold" disabled={submitting}>{submitting ? "Entrando..." : "Entrar no painel"}<ArrowRight size={18} /></button></form>
+        <form onSubmit={handleSubmit}><label>E-mail<div className="input-icon"><Mail /><input type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" /></div></label><label>Senha<div className="input-icon"><LockKeyhole /><input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" /></div></label>{message && <div className="form-message">{message}</div>}<button className="button button--gold" disabled={submitting}>{submitting ? "Entrando..." : "Entrar no painel"}<ArrowRight size={18} /></button></form>
         {!isSupabaseConfigured && <div className="setup-note"><b>Banco de dados indisponível</b><span>Configure a conexão com o Supabase para acessar o painel.</span></div>}
         <Link to="/" className="back-link">← Voltar para o site</Link>
       </div></div>

@@ -51,7 +51,8 @@ function SpecificationIcon({ specificationKey }: { specificationKey: string }) {
 
 export function PropertyDetailsPage() {
   const { id } = useParams();
-  const { properties, loading } = useProperties();
+  const { properties, loading, error, reload } = useProperties();
+  const [shareMessage, setShareMessage] = useState("");
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
   const property = properties.find((item) => item.id === id);
@@ -73,6 +74,7 @@ export function PropertyDetailsPage() {
   };
 
   if (loading) return <main className="inner-page"><PageLoader /></main>;
+  if (error) return <main className="inner-page not-found"><h1>Não foi possível carregar o imóvel</h1><p>Verifique sua conexão e tente novamente.</p><button className="button button--gold" onClick={() => { void reload(); }}>Tentar novamente</button></main>;
   if (!property) return <main className="inner-page not-found"><span>404</span><h1>Imóvel não encontrado</h1><p>Este anúncio pode ter sido atualizado ou removido.</p><Link className="button button--gold" to="/imoveis">Voltar aos imóveis</Link></main>;
 
   const primaryMedia = media[0];
@@ -83,10 +85,22 @@ export function PropertyDetailsPage() {
     <main className="inner-page detail-page">
       <div className="site-container detail-topbar">
         <Link to="/imoveis"><ArrowLeft size={17} /> Voltar aos imóveis</Link>
-        <button onClick={() => navigator.share?.({ title: property.titulo, url: window.location.href })}>
+        <button aria-label="Compartilhar imóvel" onClick={async () => {
+          setShareMessage("");
+          try {
+            if (navigator.share) await navigator.share({ title: property.titulo, url: window.location.href });
+            else if (navigator.clipboard) {
+              await navigator.clipboard.writeText(window.location.href);
+              setShareMessage("Link copiado!");
+            } else setShareMessage("Copie o endereço da página para compartilhar.");
+          } catch (cause) {
+            if (!(cause instanceof Error && cause.name === "AbortError")) setShareMessage("Não foi possível compartilhar. Copie o endereço da página.");
+          }
+        }}>
           <Share2 size={17} /> Compartilhar
         </button>
       </div>
+      {shareMessage && <p className="site-container" role="status">{shareMessage}</p>}
 
       {/* Mosaic Gallery Section */}
       <section className="gallery-mosaic-wrap">

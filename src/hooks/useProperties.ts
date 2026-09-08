@@ -20,12 +20,17 @@ export function useProperties(featuredOnly = false) {
       return;
     }
 
-    let query = supabase.from("imoveis").select("*, imovel_caracteristicas(caracteristica_id, caracteristicas(id, nome, categoria))").order("criado_em", { ascending: false });
-    if (featuredOnly) query = query.eq("destaque", true).limit(3);
-    const { data, error: queryError } = await query;
-    if (queryError) setError("Não foi possível carregar os imóveis agora.");
-    setProperties((data ?? []).map((item) => normalizePropertyRow(item as Record<string, unknown>)));
-    setLoading(false);
+    try {
+      let query = supabase.from("imoveis").select("*, imovel_caracteristicas(caracteristica_id, caracteristicas(id, nome, categoria))").order("criado_em", { ascending: false });
+      if (featuredOnly) query = query.eq("destaque", true).limit(3);
+      const { data, error: queryError } = await query;
+      if (queryError) setError("Não foi possível carregar os imóveis agora.");
+      setProperties((data ?? []).map((item) => normalizePropertyRow(item as Record<string, unknown>)));
+    } catch {
+      setError("Não foi possível carregar os imóveis agora.");
+    } finally {
+      setLoading(false);
+    }
   }, [featuredOnly]);
 
   useEffect(() => {

@@ -13,8 +13,15 @@ import { PropertyDetailsPage } from "@/src/pages/PropertyDetailsPage";
 function ScrollManager() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
-    if (hash) window.setTimeout(() => document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" }), 50);
-    else window.scrollTo({ top: 0, behavior: "instant" });
+    if (hash) {
+      const timer = window.setTimeout(() => {
+        let target = hash.slice(1);
+        try { target = decodeURIComponent(target); } catch { /* Keep malformed fragments harmless. */ }
+        document.getElementById(target)?.scrollIntoView({ behavior: "smooth" });
+      }, 50);
+      return () => window.clearTimeout(timer);
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname, hash]);
   return null;
 }

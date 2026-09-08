@@ -32,11 +32,11 @@ export function Header() {
           <img src="/brand/logo-jls.png" alt="JLS Negócios Imobiliários" />
         </Link>
 
-        <button className="menu-button" onClick={() => setOpen((value) => !value)} aria-label="Abrir menu" aria-expanded={open}>
+        <button className="menu-button" onClick={() => setOpen((value) => !value)} aria-label={open ? "Fechar menu" : "Abrir menu"} aria-expanded={open} aria-controls="main-navigation">
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        <nav className={`main-nav ${open ? "main-nav--open" : ""}`} aria-label="Navegação principal">
+        <nav id="main-navigation" className={`main-nav ${open ? "main-nav--open" : ""}`} aria-label="Navegação principal" onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
           {nav.map((item) => (
             <NavLink key={item.label} to={item.to} onClick={() => setOpen(false)} className={({ isActive }) => (isActive && item.to !== "/" ? "active" : "")}>
               {item.label}
